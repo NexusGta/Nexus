@@ -19,6 +19,7 @@
     --muted:#8894ac;
     --gold:#e8c477;
     --red:#ff5c6a;
+    --green:#3ecf6a;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -310,6 +311,8 @@
   }
   .mini-btn.danger{color:var(--red); border-color:rgba(255,92,106,.3);}
   .mini-btn.danger:hover{background:rgba(255,92,106,.1);}
+  .mini-btn.confirm{color:var(--green); border-color:rgba(62,207,106,.35);}
+  .mini-btn.confirm:hover{background:rgba(62,207,106,.1);}
   .stock-row{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
   .stock-row span{flex:1; font-size:.88rem;}
   .stock-row input{
@@ -344,6 +347,45 @@
     font-size:.82rem;
   }
   .ticket-item b{color:#fff; font-size:.85rem;}
+  .ticket-reply{
+    margin-top:8px; padding-top:8px; border-top:1px solid var(--line);
+    color:var(--cyan); font-size:.82rem;
+  }
+  .ticket-reply b{color:var(--cyan);}
+  .ticket-reply-form{display:flex; flex-direction:column; gap:8px; margin-top:10px;}
+  .ticket-reply-form textarea{
+    background:var(--panel); border:1px solid var(--line); color:var(--text);
+    padding:8px 10px; border-radius:7px; font-size:.82rem; font-family:'Inter',sans-serif; resize:vertical;
+  }
+
+  /* ---- commandes ---- */
+  .order-item{
+    background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+    font-size:.85rem; cursor:pointer; transition:border-color .2s;
+  }
+  .order-item:hover{border-color:rgba(94,231,255,.35);}
+  .order-status{
+    display:inline-flex; align-items:center; gap:6px; font-size:.72rem; text-transform:uppercase;
+    letter-spacing:.06em; padding:3px 10px; border-radius:20px; margin-left:8px;
+  }
+  .order-status.pending{background:rgba(232,196,119,.12); color:var(--gold); border:1px solid rgba(232,196,119,.3);}
+  .order-status.confirmed{background:rgba(62,207,106,.12); color:var(--green); border:1px solid rgba(62,207,106,.3);}
+  .order-creds{
+    margin-top:10px; padding-top:10px; border-top:1px solid var(--line);
+    display:flex; flex-direction:column; gap:4px; font-size:.82rem; color:var(--text);
+  }
+  .order-creds b{color:var(--cyan);}
+  .order-locked{color:var(--muted); font-size:.82rem; margin-top:8px;}
+
+  /* ---- toast notification ---- */
+  .toast{
+    position:fixed; top:90px; left:50%; transform:translateX(-50%) translateY(-20px);
+    z-index:400; background:rgba(255,92,106,.15); border:1px solid rgba(255,92,106,.5);
+    color:#ffd3d7; padding:14px 22px; border-radius:10px; font-size:.9rem; font-weight:600;
+    opacity:0; pointer-events:none; transition:all .3s; backdrop-filter:blur(10px);
+    box-shadow:0 14px 30px -10px rgba(255,92,106,.4);
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
   @media(max-width:860px){
     nav.desktop-nav{display:none;}
@@ -354,6 +396,7 @@
 <body>
 
 <div class="glow"></div>
+<div class="toast" id="toast"></div>
 
 <header>
   <div class="brand" id="brandHome"><span class="dot"></span>NEXUS<span>ACCOUNTS</span></div>
@@ -362,6 +405,7 @@
     <a data-goto="categorie">Catégorie</a>
     <a data-goto="offres">Offres</a>
     <a data-goto="confiance">Sécurité</a>
+    <a id="navOrders" data-goto-view="ordersView">Commandes</a>
   </nav>
   <div class="header-actions">
     <div id="authArea"></div>
@@ -375,6 +419,7 @@
   <a data-goto="categorie">Catégorie</a>
   <a data-goto="offres">Offres</a>
   <a data-goto="confiance">Sécurité</a>
+  <a data-goto-view="ordersView">Commandes</a>
 </div>
 
 <!-- ============ SITE PRINCIPAL ============ -->
@@ -437,7 +482,7 @@
       </ul>
       <div class="tier-options">
         <label>Niveau du personnage</label>
-        <select>
+        <select data-level-select="Basic">
           <option>Niveau 1</option><option>Niveau 2</option><option>Niveau 3</option>
           <option>Niveau 4</option><option>Niveau 5</option><option>Niveau 6</option>
           <option>Niveau 7</option><option>Niveau 8</option><option>Niveau 9</option>
@@ -466,7 +511,7 @@
       </ul>
       <div class="tier-options">
         <label>Niveau du personnage</label>
-        <select>
+        <select data-level-select="Premium">
           <option>Niveau 10</option><option>Niveau 12</option><option>Niveau 14</option>
           <option>Niveau 16</option><option>Niveau 18</option><option>Niveau 20</option>
         </select>
@@ -492,7 +537,7 @@
       </ul>
       <div class="tier-options">
         <label>Niveau du personnage</label>
-        <select>
+        <select data-level-select="Ultimate">
           <option>Niveau 10</option><option>Niveau 12</option><option>Niveau 14</option>
           <option>Niveau 16</option><option>Niveau 18</option><option>Niveau 20</option>
         </select>
@@ -597,7 +642,12 @@
   <div class="card-grid">
 
     <div class="settings-card">
-      <h3>Gestion du stock</h3>
+      <h3>Ajouter un compte en stock</h3>
+      <div id="addStockForm"></div>
+    </div>
+
+    <div class="settings-card">
+      <h3>Stock actuel</h3>
       <div id="stockManager"></div>
     </div>
 
@@ -617,7 +667,26 @@
 
     <div class="settings-card" style="grid-column:1/-1;">
       <h3>Tous les tickets</h3>
-      <div class="ticket-list" id="allTicketsList" style="max-height:400px;"></div>
+      <div class="ticket-list" id="allTicketsList" style="max-height:500px;"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ PAGE COMMANDES ============ -->
+<div class="page-view" id="ordersView">
+  <a class="page-back" data-goto-view="mainSite">← Retour au site</a>
+  <h2 class="page-title">Commandes</h2>
+  <div class="card-grid">
+
+    <div class="settings-card">
+      <h3 id="myOrdersTitle">Mes commandes</h3>
+      <div class="ticket-list" id="myOrdersList" style="max-height:600px;"></div>
+    </div>
+
+    <div class="settings-card" id="adminOrdersCard" style="display:none;">
+      <h3>Toutes les commandes (admin)</h3>
+      <div class="ticket-list" id="allOrdersList" style="max-height:600px;"></div>
     </div>
 
   </div>
@@ -685,6 +754,7 @@ document.addEventListener('DOMContentLoaded', function () {
      A remplacer par un vrai serveur/base de données plus tard.
   ============================================================ */
   var ADMIN_EMAIL = "top1hunterxx@gmail.com";
+  var TIERS = ["Basic","Premium","Ultimate"];
 
   function loadJSON(key, fallback){
     try{
@@ -696,15 +766,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var users   = loadJSON('nx_users', []);
   var session = localStorage.getItem('nx_session') || null;
-  var stock   = loadJSON('nx_stock', { Basic: 8, Premium: 5, Ultimate: 2 });
+  // stockItems: { Basic: [ {mailId, psnPassword, email, mailPassword, mailWebsite, dob, character} ... ], Premium:[...], Ultimate:[...] }
+  var stockItems = loadJSON('nx_stock_items', { Basic: [], Premium: [], Ultimate: [] });
   var banned  = loadJSON('nx_banned', []);
   var tickets = loadJSON('nx_tickets', []);
+  // orders: { id, tier, amount, buyerEmail, level, status:'pending'|'confirmed', account:{...}, date }
+  var orders  = loadJSON('nx_orders', []);
   var pendingEmailChange = null;
 
   function persistUsers(){ saveJSON('nx_users', users); }
-  function persistStock(){ saveJSON('nx_stock', stock); }
+  function persistStock(){ saveJSON('nx_stock_items', stockItems); }
   function persistBanned(){ saveJSON('nx_banned', banned); }
   function persistTickets(){ saveJSON('nx_tickets', tickets); }
+  function persistOrders(){ saveJSON('nx_orders', orders); }
 
   function findUser(email){
     email = (email||'').toLowerCase().trim();
@@ -715,6 +789,22 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   function currentUser(){
     return session ? findUser(session) : null;
+  }
+
+  /* ---------- TOAST ---------- */
+  var toastEl = document.getElementById('toast');
+  var toastTimer = null;
+  function showToast(msg){
+    clearTimeout(toastTimer);
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 3200);
+  }
+
+  function escapeHTML(str){
+    var div = document.createElement('div');
+    div.textContent = str == null ? '' : str;
+    return div.innerHTML;
   }
 
   /* ---------- BURGER / MENU MOBILE ---------- */
@@ -739,12 +829,16 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('mainSite').classList.remove('open');
     document.getElementById('accountView').classList.remove('open');
     document.getElementById('adminView').classList.remove('open');
+    document.getElementById('ordersView').classList.remove('open');
     if(viewId === 'mainSite'){
       document.getElementById('mainSite').style.display = 'block';
     }else{
       document.getElementById('mainSite').style.display = 'none';
       document.getElementById(viewId).classList.add('open');
     }
+    if(viewId === 'accountView') renderAccountView();
+    if(viewId === 'adminView') renderAdminView();
+    if(viewId === 'ordersView') renderOrdersView();
     window.scrollTo(0,0);
     closeMenu();
     closeAccountDropdown();
@@ -760,7 +854,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
   document.querySelectorAll('[data-goto-view]').forEach(function(a){
-    a.addEventListener('click', function(){ showView(a.getAttribute('data-goto-view')); });
+    a.addEventListener('click', function(){
+      if(a.getAttribute('data-goto-view') === 'ordersView' && !currentUser()){
+        openLoginModal();
+        return;
+      }
+      showView(a.getAttribute('data-goto-view'));
+    });
   });
   document.getElementById('brandHome').addEventListener('click', function(){ showView('mainSite'); });
 
@@ -794,6 +894,8 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   var authForm = document.getElementById('authForm');
+  var pendingPurchase = null; // { tier, amount } si on ouvre le login suite à un clic "Acheter"
+
   authForm.addEventListener('submit', function(e){
     e.preventDefault();
     var email = document.getElementById('authEmail').value.trim();
@@ -853,6 +955,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '<button type="button" class="btn-login" id="accountToggle">Mon compte ▾</button>'+
           '<div class="account-dropdown" id="accountDropdown">'+
             '<a id="ddCompte">Compte</a>'+
+            '<a id="ddOrders">Commandes</a>'+
             (admin ? '<a id="ddAdmin">Admin</a>' : '')+
             '<hr>'+
             '<a id="ddLogout" class="danger">Déconnexion</a>'+
@@ -864,12 +967,13 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('accountDropdown').classList.toggle('open');
       });
       document.getElementById('ddCompte').addEventListener('click', function(){
-        renderAccountView();
         showView('accountView');
+      });
+      document.getElementById('ddOrders').addEventListener('click', function(){
+        showView('ordersView');
       });
       if(admin){
         document.getElementById('ddAdmin').addEventListener('click', function(){
-          renderAdminView();
           showView('adminView');
         });
       }
@@ -893,7 +997,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('accountAdminBadge').innerHTML = isAdmin(u.email)
       ? '<span class="badge-admin">Compte administrateur</span>' : '';
 
-    // reset des formulaires
     document.getElementById('emailStep1').style.display = 'block';
     document.getElementById('emailStep2').style.display = 'none';
     document.getElementById('newEmailInput').value = '';
@@ -919,7 +1022,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     var code = String(Math.floor(100000 + Math.random()*900000));
     pendingEmailChange = { newEmail: newEmail, code: code };
-    // Simulation d'envoi d'email (pas de serveur mail branché)
     alert('Un code de vérification a été envoyé à ' + newEmail + ' :\n\n' + code);
     document.getElementById('emailStep1').style.display = 'none';
     document.getElementById('emailStep2').style.display = 'block';
@@ -935,11 +1037,16 @@ document.addEventListener('DOMContentLoaded', function () {
       msg.classList.add('error'); msg.textContent = 'Code incorrect.'; return;
     }
     var u = currentUser();
-    var wasAdminSession = session;
+    var oldEmail = u.email;
     u.email = pendingEmailChange.newEmail;
     persistUsers();
     session = u.email;
     localStorage.setItem('nx_session', session);
+    // met à jour les tickets et commandes existants pour rester liés au bon compte
+    tickets.forEach(function(t){ if(t.email.toLowerCase() === oldEmail.toLowerCase()) t.email = u.email; });
+    orders.forEach(function(o){ if(o.buyerEmail.toLowerCase() === oldEmail.toLowerCase()) o.buyerEmail = u.email; });
+    persistTickets();
+    persistOrders();
     pendingEmailChange = null;
     msg.classList.add('success'); msg.textContent = 'Email mis à jour avec succès.';
     renderAuthArea();
@@ -980,40 +1087,88 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ---------- STOCK (affichage public + gestion admin) ---------- */
   function renderStockPublic(){
-    ['Basic','Premium','Ultimate'].forEach(function(tier){
+    TIERS.forEach(function(tier){
       var el = document.querySelector('[data-stock-display="'+tier+'"]');
-      var qty = stock[tier] || 0;
+      var qty = (stockItems[tier] || []).length;
       el.innerHTML = 'Stock : <b>' + qty + '</b>';
       el.classList.toggle('empty', qty <= 0);
       var btn = document.querySelector('.tier-buy[data-tier="'+tier+'"]');
-      if(qty <= 0){
-        btn.disabled = true;
-        btn.textContent = 'Rupture de stock';
-      }else{
-        btn.disabled = false;
-        btn.textContent = 'Acheter avec PayPal';
+      btn.textContent = 'Acheter avec PayPal';
+      btn.disabled = false;
+    });
+  }
+
+  /* Formulaire d'ajout d'un compte en stock (les 7 champs demandés) */
+  var STOCK_FIELDS = [
+    {key:'mailId', label:'Mail id'},
+    {key:'psnPassword', label:'PSN password'},
+    {key:'email', label:'Email'},
+    {key:'mailPassword', label:'Mail password'},
+    {key:'mailWebsite', label:'Mail website'},
+    {key:'dob', label:'Date of birth'},
+    {key:'character', label:'Character'}
+  ];
+
+  function renderAddStockForm(){
+    var box = document.getElementById('addStockForm');
+    var tierOptions = TIERS.map(function(t){ return '<option value="'+t+'">'+t+'</option>'; }).join('');
+    var fieldsHTML = STOCK_FIELDS.map(function(f){
+      return '<div class="field"><label>'+f.label+'</label><input type="text" data-stock-field="'+f.key+'" placeholder="'+f.label+'"></div>';
+    }).join('');
+    box.innerHTML =
+      '<div class="field"><label>Catégorie</label><select id="addStockTier">'+tierOptions+'</select></div>'+
+      fieldsHTML+
+      '<button type="button" class="modal-submit" id="addStockBtn">Ajouter au stock</button>'+
+      '<div class="form-msg" id="addStockMsg"></div>';
+
+    document.getElementById('addStockBtn').addEventListener('click', function(){
+      var tier = document.getElementById('addStockTier').value;
+      var msg = document.getElementById('addStockMsg');
+      msg.className = 'form-msg';
+      var entry = {};
+      var missing = false;
+      STOCK_FIELDS.forEach(function(f){
+        var val = box.querySelector('[data-stock-field="'+f.key+'"]').value.trim();
+        if(!val) missing = true;
+        entry[f.key] = val;
+      });
+      if(missing){
+        msg.classList.add('error'); msg.textContent = 'Merci de remplir tous les champs.'; return;
       }
+      if(!stockItems[tier]) stockItems[tier] = [];
+      stockItems[tier].push(entry);
+      persistStock();
+      STOCK_FIELDS.forEach(function(f){ box.querySelector('[data-stock-field="'+f.key+'"]').value = ''; });
+      msg.classList.add('success'); msg.textContent = 'Compte ajouté au stock ' + tier + '.';
+      renderStockPublic();
+      renderStockManager();
     });
   }
 
   function renderStockManager(){
     var box = document.getElementById('stockManager');
     box.innerHTML = '';
-    ['Basic','Premium','Ultimate'].forEach(function(tier){
-      var row = document.createElement('div');
-      row.className = 'stock-row';
-      row.innerHTML = '<span>'+tier+'</span><input type="number" min="0" value="'+(stock[tier]||0)+'" data-stock-input="'+tier+'"><button type="button" class="mini-btn" data-stock-save="'+tier+'">Mettre à jour</button>';
-      box.appendChild(row);
+    TIERS.forEach(function(tier){
+      var items = stockItems[tier] || [];
+      var section = document.createElement('div');
+      section.style.marginBottom = '18px';
+      var rowsHTML = items.length === 0
+        ? '<div class="empty-note">Aucun compte en stock.</div>'
+        : items.map(function(item, idx){
+            return '<div class="stock-row"><span>#'+(idx+1)+' — '+escapeHTML(item.email)+'</span>'+
+              '<button type="button" class="mini-btn danger" data-remove-stock="'+tier+'" data-idx="'+idx+'">Retirer</button></div>';
+          }).join('');
+      section.innerHTML = '<div style="color:#fff; font-weight:600; margin-bottom:8px;">'+tier+' ('+items.length+')</div>'+rowsHTML;
+      box.appendChild(section);
     });
-    box.querySelectorAll('[data-stock-save]').forEach(function(btn){
+    box.querySelectorAll('[data-remove-stock]').forEach(function(btn){
       btn.addEventListener('click', function(){
-        var tier = btn.getAttribute('data-stock-save');
-        var input = box.querySelector('[data-stock-input="'+tier+'"]');
-        var val = Math.max(0, parseInt(input.value, 10) || 0);
-        stock[tier] = val;
+        var tier = btn.getAttribute('data-remove-stock');
+        var idx = parseInt(btn.getAttribute('data-idx'), 10);
+        stockItems[tier].splice(idx, 1);
         persistStock();
         renderStockPublic();
-        alert('Stock de ' + tier + ' mis à jour : ' + val);
+        renderStockManager();
       });
     });
   }
@@ -1028,7 +1183,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     banned.forEach(function(email){
       var tr = document.createElement('tr');
-      tr.innerHTML = '<td>'+email+'</td><td><button type="button" class="mini-btn" data-unban="'+email+'">Débannir</button></td>';
+      tr.innerHTML = '<td>'+escapeHTML(email)+'</td><td><button type="button" class="mini-btn" data-unban="'+escapeHTML(email)+'">Débannir</button></td>';
       tbody.appendChild(tr);
     });
     tbody.querySelectorAll('[data-unban]').forEach(function(btn){
@@ -1060,6 +1215,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ---------- PAGE ADMIN ---------- */
   function renderAdminView(){
+    var u = currentUser();
+    if(!u || !isAdmin(u.email)){
+      showView('mainSite');
+      return;
+    }
+    renderAddStockForm();
     renderStockManager();
     renderBannedTable();
     renderAllTickets();
@@ -1072,7 +1233,6 @@ document.addEventListener('DOMContentLoaded', function () {
   var ticketStepForm = document.getElementById('ticketStepForm');
 
   function renderTicketFab(){
-    // Le bouton reste visible pour tout le monde (invités compris)
     ticketFab.style.display = 'flex';
   }
 
@@ -1125,7 +1285,9 @@ document.addEventListener('DOMContentLoaded', function () {
       id: Date.now(),
       email: email,
       reason: reason,
-      date: new Date().toLocaleString('fr-FR')
+      date: new Date().toLocaleString('fr-FR'),
+      reply: null,
+      replyDate: null
     });
     persistTickets();
     msg.classList.add('success'); msg.textContent = 'Ticket créé avec succès.';
@@ -1144,7 +1306,10 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
     box.innerHTML = mine.slice().reverse().map(function(t){
-      return '<div class="ticket-item"><b>'+t.date+'</b><div class="ticket-reason">'+escapeHTML(t.reason)+'</div></div>';
+      var replyHTML = t.reply
+        ? '<div class="ticket-reply"><b>Réponse du support</b> ('+t.replyDate+')<br>'+escapeHTML(t.reply)+'</div>'
+        : '<div class="ticket-reply" style="color:var(--muted);">En attente de réponse du support...</div>';
+      return '<div class="ticket-item"><b>'+t.date+'</b><div class="ticket-reason">'+escapeHTML(t.reason)+'</div>'+replyHTML+'</div>';
     }).join('');
   }
 
@@ -1156,20 +1321,106 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
     box.innerHTML = tickets.slice().reverse().map(function(t){
-      return '<div class="ticket-item"><b>'+escapeHTML(t.email)+'</b> — '+t.date+'<div class="ticket-reason">'+escapeHTML(t.reason)+'</div></div>';
+      var replyBlock = t.reply
+        ? '<div class="ticket-reply"><b>Ta réponse</b> ('+t.replyDate+')<br>'+escapeHTML(t.reply)+'</div>'
+        : '';
+      return '<div class="ticket-item">'+
+        '<b>'+escapeHTML(t.email)+'</b> — '+t.date+
+        '<div class="ticket-reason">'+escapeHTML(t.reason)+'</div>'+
+        replyBlock+
+        '<div class="ticket-reply-form">'+
+          '<textarea rows="2" placeholder="Écrire une réponse..." data-reply-input="'+t.id+'">'+(t.reply ? escapeHTML(t.reply) : '')+'</textarea>'+
+          '<button type="button" class="mini-btn" data-reply-send="'+t.id+'">'+(t.reply ? 'Modifier la réponse' : 'Répondre')+'</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+
+    box.querySelectorAll('[data-reply-send]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var id = parseInt(btn.getAttribute('data-reply-send'), 10);
+        var ta = box.querySelector('[data-reply-input="'+id+'"]');
+        var text = ta.value.trim();
+        if(!text){ alert('Merci d\'écrire une réponse avant d\'envoyer.'); return; }
+        var t = tickets.find(function(tt){ return tt.id === id; });
+        if(!t) return;
+        t.reply = text;
+        t.replyDate = new Date().toLocaleString('fr-FR');
+        persistTickets();
+        renderAllTickets();
+        renderMyTickets();
+      });
+    });
+  }
+
+  /* ---------- COMMANDES (ORDERS) ---------- */
+  function renderOrdersView(){
+    var u = currentUser();
+    document.getElementById('adminOrdersCard').style.display = (u && isAdmin(u.email)) ? 'block' : 'none';
+    renderMyOrders();
+    if(u && isAdmin(u.email)) renderAllOrders();
+  }
+
+  function orderStatusBadge(status){
+    return status === 'confirmed'
+      ? '<span class="order-status confirmed">Confirmé</span>'
+      : '<span class="order-status pending">En attente de confirmation</span>';
+  }
+
+  function renderMyOrders(){
+    var box = document.getElementById('myOrdersList');
+    var u = currentUser();
+    if(!u){
+      box.innerHTML = '<div class="empty-note">Connecte-toi pour voir tes commandes.</div>';
+      return;
+    }
+    var mine = orders.filter(function(o){ return o.buyerEmail.toLowerCase() === u.email.toLowerCase(); });
+    if(mine.length === 0){
+      box.innerHTML = '<div class="empty-note">Tu n\'as pas encore de commande.</div>';
+      return;
+    }
+    box.innerHTML = mine.slice().reverse().map(function(o){
+      var creds = '';
+      if(o.status === 'confirmed'){
+        creds = '<div class="order-creds">'+
+          STOCK_FIELDS.map(function(f){ return '<div><b>'+f.label+' :</b> '+escapeHTML(o.account[f.key])+'</div>'; }).join('')+
+        '</div>';
+      }else{
+        creds = '<div class="order-locked">Les informations du compte apparaîtront ici une fois le paiement confirmé.</div>';
+      }
+      return '<div class="order-item"><b>'+o.tier+'</b> — '+o.amount+'€ — '+o.date+orderStatusBadge(o.status)+creds+'</div>';
     }).join('');
   }
 
-  function escapeHTML(str){
-    var div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+  function renderAllOrders(){
+    var box = document.getElementById('allOrdersList');
+    if(orders.length === 0){
+      box.innerHTML = '<div class="empty-note">Aucune commande pour le moment.</div>';
+      return;
+    }
+    box.innerHTML = orders.slice().reverse().map(function(o){
+      var confirmBtn = o.status === 'pending'
+        ? '<button type="button" class="mini-btn confirm" data-confirm-order="'+o.id+'" style="margin-top:8px;">Confirmer le paiement reçu</button>'
+        : '';
+      return '<div class="order-item"><b>'+escapeHTML(o.buyerEmail)+'</b> — '+o.tier+' — '+o.amount+'€ — '+o.date+orderStatusBadge(o.status)+confirmBtn+'</div>';
+    }).join('');
+
+    box.querySelectorAll('[data-confirm-order]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var id = parseInt(btn.getAttribute('data-confirm-order'), 10);
+        var o = orders.find(function(oo){ return oo.id === id; });
+        if(!o) return;
+        o.status = 'confirmed';
+        persistOrders();
+        renderAllOrders();
+        renderMyOrders();
+      });
+    });
   }
 
-  /* ---------- BOUTONS PAYPAL ---------- */
+  /* ---------- BOUTONS PAYPAL / ACHAT ---------- */
   var paypalUser = "YakoubOkbi";
 
-  function payWith(tier, amount){
+  function redirectToPaypal(amount){
     var url = "https://www.paypal.com/paypalme/" + paypalUser + "/" + amount;
     var link = document.createElement('a');
     link.href = url;
@@ -1182,10 +1433,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.querySelectorAll('.tier-buy').forEach(function(btn){
     btn.addEventListener('click', function(){
-      if(btn.disabled) return;
       var tier = btn.getAttribute('data-tier');
       var amount = btn.getAttribute('data-amount');
-      payWith(tier, amount);
+
+      var items = stockItems[tier] || [];
+      if(items.length === 0){
+        showToast('Rupture de stock : aucun compte ' + tier + ' disponible pour le moment.');
+        return;
+      }
+
+      var u = currentUser();
+      if(!u){
+        pendingPurchase = { tier: tier, amount: amount };
+        openLoginModal();
+        return;
+      }
+      if(banned.indexOf(u.email.toLowerCase()) !== -1){
+        showToast('Ton compte a été banni, impossible de commander.');
+        return;
+      }
+
+      var levelSelect = document.querySelector('[data-level-select="'+tier+'"]');
+      var level = levelSelect ? levelSelect.value : '';
+
+      // On réserve le premier compte disponible en stock pour cette commande
+      var account = items.shift();
+      persistStock();
+      renderStockPublic();
+
+      var order = {
+        id: Date.now(),
+        tier: tier,
+        amount: amount,
+        buyerEmail: u.email,
+        level: level,
+        status: 'pending',
+        account: account,
+        date: new Date().toLocaleString('fr-FR')
+      };
+      orders.push(order);
+      persistOrders();
+
+      redirectToPaypal(amount);
+      showToast('Commande créée. Effectue le virement PayPal puis attends la confirmation dans "Commandes".');
     });
   });
 
