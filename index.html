@@ -18,6 +18,7 @@
     --text:#e7ecf7;
     --muted:#8894ac;
     --gold:#e8c477;
+    --red:#ff5c6a;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -45,12 +46,12 @@
     backdrop-filter:blur(14px);
     border-bottom:1px solid var(--line);
   }
-  .brand{font-size:1.4rem; font-weight:700; color:#fff; display:flex; align-items:center; gap:10px;}
+  .brand{font-size:1.4rem; font-weight:700; color:#fff; display:flex; align-items:center; gap:10px; cursor:pointer;}
   .brand span{color:var(--cyan);}
   .brand .dot{width:8px; height:8px; border-radius:50%; background:var(--cyan); box-shadow:0 0 12px var(--cyan);}
 
   nav.desktop-nav{display:flex; gap:34px;}
-  nav.desktop-nav a{color:var(--muted); text-decoration:none; font-size:.92rem; font-weight:500; transition:color .2s;}
+  nav.desktop-nav a{color:var(--muted); text-decoration:none; font-size:.92rem; font-weight:500; transition:color .2s; cursor:pointer;}
   nav.desktop-nav a:hover{color:var(--cyan);}
 
   .header-actions{display:flex; align-items:center; gap:16px;}
@@ -58,9 +59,26 @@
     background:transparent; border:1px solid var(--line); color:var(--text);
     padding:9px 18px; border-radius:8px; font-size:.88rem; cursor:pointer;
     transition:all .2s; font-family:'Inter',sans-serif;
-    max-width:190px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
   .btn-login:hover{border-color:var(--blue-bright); color:var(--cyan);}
+
+  /* ---- menu compte connecté ---- */
+  .account-menu{position:relative;}
+  .account-dropdown{
+    position:absolute; top:calc(100% + 10px); right:0; min-width:190px;
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:8px; display:none; flex-direction:column; gap:2px;
+    box-shadow:0 20px 40px -14px rgba(0,0,0,.6); z-index:200;
+  }
+  .account-dropdown.open{display:flex;}
+  .account-dropdown a{
+    color:var(--text); text-decoration:none; font-size:.9rem; padding:10px 12px;
+    border-radius:8px; transition:background .15s; cursor:pointer;
+  }
+  .account-dropdown a:hover{background:var(--panel2);}
+  .account-dropdown a.danger{color:var(--red);}
+  .account-dropdown a.danger:hover{background:rgba(255,92,106,.1);}
+  .account-dropdown hr{border:none; border-top:1px solid var(--line); margin:6px 4px;}
 
   .burger{
     display:flex; flex-direction:column; justify-content:center; gap:5px;
@@ -79,7 +97,7 @@
     transition:right .35s cubic-bezier(.6,0,.3,1);
   }
   .mobile-menu.open{right:0;}
-  .mobile-menu a{color:var(--text); text-decoration:none; font-size:1.1rem; font-weight:500;}
+  .mobile-menu a{color:var(--text); text-decoration:none; font-size:1.1rem; font-weight:500; cursor:pointer;}
   .mobile-menu a:hover{color:var(--cyan);}
   .overlay{
     position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:140;
@@ -174,9 +192,14 @@
     padding:5px 14px; border-radius:20px;
   }
   .tier-name{font-size:1.3rem; color:#fff; font-weight:700; text-transform:uppercase; letter-spacing:.05em;}
-  .tier-price{margin:14px 0 22px;}
+  .tier-price{margin:14px 0 10px;}
   .tier-price b{font-size:2.4rem; color:#fff; font-family:'Rajdhani',sans-serif;}
   .tier-price span{color:var(--muted); font-size:.85rem;}
+  .stock-badge{
+    font-size:.78rem; color:var(--muted); margin-bottom:18px; display:flex; align-items:center; gap:6px;
+  }
+  .stock-badge b{color:var(--cyan); font-weight:700;}
+  .stock-badge.empty b{color:var(--red);}
   .tier-features{list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:26px; flex:1;}
   .tier-features li{
     color:var(--text); font-size:.92rem; display:flex; gap:10px; align-items:flex-start; line-height:1.4;
@@ -200,6 +223,9 @@
     box-shadow:0 10px 26px -10px rgba(47,111,237,.8);
   }
   .tier-buy:hover{filter:brightness(1.15);}
+  .tier-buy:disabled{
+    opacity:.5; cursor:not-allowed; filter:none; background:var(--panel2); border:1px solid var(--line);
+  }
 
   .trust-grid{
     display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:24px; max-width:1000px; margin:0 auto;
@@ -226,6 +252,7 @@
     background:var(--panel); border:1px solid var(--line); border-radius:18px;
     width:100%; max-width:400px; padding:38px 32px; position:relative;
     transform:translateY(14px); transition:transform .25s;
+    max-height:88vh; overflow-y:auto;
   }
   .modal-overlay.open .modal{transform:translateY(0);}
   .modal h3{color:#fff; font-size:1.5rem; margin-bottom:6px;}
@@ -236,23 +263,87 @@
   }
   .field{margin-bottom:16px; display:flex; flex-direction:column; gap:6px;}
   .field label{font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
-  .field input{
+  .field input, .field textarea{
     background:var(--panel2); border:1px solid var(--line); color:var(--text);
     padding:12px 14px; border-radius:9px; font-size:.92rem; font-family:'Inter',sans-serif;
+    resize:vertical;
   }
-  .field input:focus{outline:none; border-color:var(--blue-bright);}
+  .field input:focus, .field textarea:focus{outline:none; border-color:var(--blue-bright);}
   .modal-submit{
     width:100%; background:linear-gradient(90deg,var(--blue),var(--blue-bright)); color:#fff;
     border:none; padding:13px; border-radius:9px; font-weight:600; cursor:pointer; margin-top:6px;
   }
-  .modal-submit[disabled]{opacity:.6; cursor:not-allowed;}
+  .modal-submit.secondary{background:var(--panel2); border:1px solid var(--line);}
   .modal-switch{text-align:center; margin-top:18px; font-size:.85rem; color:var(--muted);}
   .modal-switch a{color:var(--cyan); text-decoration:none; cursor:pointer;}
-  .auth-error{
-    display:none; background:rgba(237,47,47,.1); border:1px solid rgba(237,47,47,.35);
-    color:#ff8b8b; font-size:.82rem; padding:10px 12px; border-radius:8px; margin-bottom:16px;
+  .form-msg{font-size:.82rem; margin-top:10px; min-height:16px;}
+  .form-msg.error{color:var(--red);}
+  .form-msg.success{color:var(--cyan);}
+
+  /* ---- pages compte / admin ---- */
+  .page-view{display:none; padding:150px 5% 100px; position:relative; z-index:1; min-height:100vh;}
+  .page-view.open{display:block;}
+  .page-back{
+    color:var(--muted); text-decoration:none; font-size:.85rem; cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px; margin-bottom:30px;
   }
-  .auth-error.show{display:block;}
+  .page-back:hover{color:var(--cyan);}
+  .page-title{color:#fff; font-size:2rem; margin-bottom:36px;}
+  .card-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:24px; max-width:1100px;}
+  .settings-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:30px;
+  }
+  .settings-card h3{color:#fff; font-size:1.1rem; margin-bottom:20px;}
+  .badge-admin{
+    display:inline-block; background:rgba(232,196,119,.12); color:var(--gold);
+    border:1px solid rgba(232,196,119,.3); font-size:.72rem; padding:4px 10px;
+    border-radius:20px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:20px;
+  }
+  .mini-table{width:100%; border-collapse:collapse; margin-top:14px;}
+  .mini-table th, .mini-table td{
+    text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); font-size:.85rem;
+  }
+  .mini-table th{color:var(--muted); font-weight:500; text-transform:uppercase; font-size:.72rem; letter-spacing:.05em;}
+  .mini-btn{
+    background:var(--panel2); border:1px solid var(--line); color:var(--text);
+    padding:6px 12px; border-radius:7px; font-size:.78rem; cursor:pointer;
+  }
+  .mini-btn.danger{color:var(--red); border-color:rgba(255,92,106,.3);}
+  .mini-btn.danger:hover{background:rgba(255,92,106,.1);}
+  .stock-row{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .stock-row span{flex:1; font-size:.88rem;}
+  .stock-row input{
+    width:80px; background:var(--panel2); border:1px solid var(--line); color:var(--text);
+    padding:8px 10px; border-radius:7px; font-size:.85rem;
+  }
+  .empty-note{color:var(--muted); font-size:.85rem; padding:14px 0;}
+  .ticket-reason{color:var(--muted); font-size:.82rem; margin-top:2px;}
+
+  /* ---- widget ticket ---- */
+  .ticket-fab{
+    position:fixed; bottom:26px; right:26px; z-index:250;
+    width:58px; height:58px; border-radius:50%;
+    background:linear-gradient(135deg, var(--blue), var(--cyan));
+    display:flex; align-items:center; justify-content:center;
+    border:none; cursor:pointer; box-shadow:0 12px 28px -8px rgba(47,111,237,.8);
+    font-size:1.5rem;
+  }
+  .ticket-fab:hover{filter:brightness(1.1);}
+  .ticket-panel{
+    position:fixed; bottom:96px; right:26px; z-index:250; width:320px;
+    background:var(--panel); border:1px solid var(--line); border-radius:16px;
+    padding:22px; display:none; box-shadow:0 20px 50px -14px rgba(0,0,0,.7);
+  }
+  .ticket-panel.open{display:block;}
+  .ticket-panel h4{color:#fff; font-size:1.05rem; margin-bottom:6px;}
+  .ticket-panel p{color:var(--muted); font-size:.82rem; margin-bottom:16px;}
+  .ticket-actions{display:flex; gap:10px;}
+  .ticket-list{max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-top:10px;}
+  .ticket-item{
+    background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:12px;
+    font-size:.82rem;
+  }
+  .ticket-item b{color:#fff; font-size:.85rem;}
 
   @media(max-width:860px){
     nav.desktop-nav{display:none;}
@@ -265,26 +356,29 @@
 <div class="glow"></div>
 
 <header>
-  <div class="brand"><span class="dot"></span>NEXUS<span>ACCOUNTS</span></div>
+  <div class="brand" id="brandHome"><span class="dot"></span>NEXUS<span>ACCOUNTS</span></div>
   <nav class="desktop-nav">
-    <a href="#accueil">Accueil</a>
-    <a href="#categorie">Catégorie</a>
-    <a href="#offres">Offres</a>
-    <a href="#confiance">Sécurité</a>
+    <a data-goto="accueil">Accueil</a>
+    <a data-goto="categorie">Catégorie</a>
+    <a data-goto="offres">Offres</a>
+    <a data-goto="confiance">Sécurité</a>
   </nav>
   <div class="header-actions">
-    <button type="button" class="btn-login" id="openLogin">Connexion</button>
+    <div id="authArea"></div>
     <button type="button" class="burger" id="burger"><span></span><span></span><span></span></button>
   </div>
 </header>
 
 <div class="overlay" id="overlay"></div>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#accueil">Accueil</a>
-  <a href="#categorie">Catégorie</a>
-  <a href="#offres">Offres</a>
-  <a href="#confiance">Sécurité</a>
+  <a data-goto="accueil">Accueil</a>
+  <a data-goto="categorie">Catégorie</a>
+  <a data-goto="offres">Offres</a>
+  <a data-goto="confiance">Sécurité</a>
 </div>
+
+<!-- ============ SITE PRINCIPAL ============ -->
+<div id="mainSite">
 
 <!-- HERO -->
 <section class="hero" id="accueil">
@@ -328,9 +422,10 @@
   <div class="pricing-grid">
 
     <!-- BASIC -->
-    <div class="tier">
+    <div class="tier" data-tier-card="Basic">
       <div class="tier-name">Basic</div>
-      <div class="tier-price"><b>19,99€</b> <span>/ compte</span></div>
+      <div class="tier-price"><b>10€</b> <span>/ compte</span></div>
+      <div class="stock-badge" data-stock-display="Basic">Stock : <b>-</b></div>
       <ul class="tier-features">
         <li>20 000 000 $ pure cash</li>
         <li>1 complexe (bureau/organisation)</li>
@@ -349,14 +444,15 @@
           <option>Niveau 10</option>
         </select>
       </div>
-      <button type="button" class="tier-buy" data-tier="Basic" data-amount="19.99">Acheter avec PayPal</button>
+      <button type="button" class="tier-buy" data-tier="Basic" data-amount="10">Acheter avec PayPal</button>
     </div>
 
     <!-- PREMIUM -->
-    <div class="tier featured">
+    <div class="tier featured" data-tier-card="Premium">
       <div class="featured-tag">Le plus choisi</div>
       <div class="tier-name">Premium</div>
-      <div class="tier-price"><b>39,99€</b> <span>/ compte</span></div>
+      <div class="tier-price"><b>25€</b> <span>/ compte</span></div>
+      <div class="stock-badge" data-stock-display="Premium">Stock : <b>-</b></div>
       <ul class="tier-features">
         <li>35 000 000 $ pure cash</li>
         <li>1 complexe + 1 appartement de luxe</li>
@@ -375,13 +471,14 @@
           <option>Niveau 16</option><option>Niveau 18</option><option>Niveau 20</option>
         </select>
       </div>
-      <button type="button" class="tier-buy" data-tier="Premium" data-amount="39.99">Acheter avec PayPal</button>
+      <button type="button" class="tier-buy" data-tier="Premium" data-amount="25">Acheter avec PayPal</button>
     </div>
 
     <!-- ULTIMATE -->
-    <div class="tier">
+    <div class="tier" data-tier-card="Ultimate">
       <div class="tier-name">Ultimate</div>
-      <div class="tier-price"><b>69,99€</b> <span>/ compte</span></div>
+      <div class="tier-price"><b>30€</b> <span>/ compte</span></div>
+      <div class="stock-badge" data-stock-display="Ultimate">Stock : <b>-</b></div>
       <ul class="tier-features">
         <li>50 000 000 $ pure cash</li>
         <li>1 complexe + 1 appartement de luxe</li>
@@ -400,7 +497,7 @@
           <option>Niveau 16</option><option>Niveau 18</option><option>Niveau 20</option>
         </select>
       </div>
-      <button type="button" class="tier-buy" data-tier="Ultimate" data-amount="69.99">Acheter avec PayPal</button>
+      <button type="button" class="tier-buy" data-tier="Ultimate" data-amount="30">Acheter avec PayPal</button>
     </div>
 
   </div>
@@ -435,23 +532,115 @@
   © 2026 Nexus Accounts — Ce site est un projet indépendant, non affilié à Rockstar Games ou Take-Two Interactive.
 </footer>
 
-<!-- MODAL LOGIN / SIGNUP -->
+</div>
+<!-- ============ FIN SITE PRINCIPAL ============ -->
+
+
+<!-- ============ PAGE COMPTE ============ -->
+<div class="page-view" id="accountView">
+  <a class="page-back" data-goto-view="mainSite">← Retour au site</a>
+  <h2 class="page-title">Mon compte</h2>
+  <div id="accountAdminBadge"></div>
+  <div class="card-grid">
+
+    <div class="settings-card">
+      <h3>Adresse email</h3>
+      <p style="color:var(--muted); font-size:.82rem; margin-bottom:16px;">Email actuel : <b id="currentEmailLabel" style="color:#fff;"></b></p>
+      <div id="emailStep1">
+        <div class="field">
+          <label>Nouvelle adresse email</label>
+          <input type="email" id="newEmailInput" placeholder="nouveau@exemple.com">
+        </div>
+        <button type="button" class="modal-submit" id="sendCodeBtn">Envoyer le code de vérification</button>
+      </div>
+      <div id="emailStep2" style="display:none;">
+        <div class="field">
+          <label>Code de vérification</label>
+          <input type="text" id="verifyCodeInput" placeholder="Entre le code reçu">
+        </div>
+        <button type="button" class="modal-submit" id="confirmEmailBtn">Valider le nouvel email</button>
+        <button type="button" class="modal-submit secondary" id="cancelEmailBtn" style="margin-top:8px;">Annuler</button>
+      </div>
+      <div class="form-msg" id="emailMsg"></div>
+    </div>
+
+    <div class="settings-card">
+      <h3>Mot de passe</h3>
+      <div class="field">
+        <label>Mot de passe actuel</label>
+        <input type="password" id="currentPasswordInput" placeholder="••••••••">
+      </div>
+      <div class="field">
+        <label>Nouveau mot de passe</label>
+        <input type="password" id="newPasswordInput" placeholder="••••••••">
+      </div>
+      <div class="field">
+        <label>Confirmer le mot de passe</label>
+        <input type="password" id="confirmPasswordInput" placeholder="••••••••">
+      </div>
+      <button type="button" class="modal-submit" id="changePasswordBtn">Changer le mot de passe</button>
+      <div class="form-msg" id="passwordMsg"></div>
+    </div>
+
+    <div class="settings-card">
+      <h3>Mes tickets</h3>
+      <div class="ticket-list" id="myTicketsList"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ PAGE ADMIN ============ -->
+<div class="page-view" id="adminView">
+  <a class="page-back" data-goto-view="mainSite">← Retour au site</a>
+  <h2 class="page-title">Espace admin</h2>
+  <div class="card-grid">
+
+    <div class="settings-card">
+      <h3>Gestion du stock</h3>
+      <div id="stockManager"></div>
+    </div>
+
+    <div class="settings-card">
+      <h3>Bannir un membre</h3>
+      <div class="field">
+        <label>Email du membre</label>
+        <input type="email" id="banEmailInput" placeholder="membre@exemple.com">
+      </div>
+      <button type="button" class="modal-submit" id="banBtn" style="background:linear-gradient(90deg,#c0303f,var(--red));">Bannir</button>
+      <div class="form-msg" id="banMsg"></div>
+      <table class="mini-table" id="bannedTable">
+        <thead><tr><th>Email</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="settings-card" style="grid-column:1/-1;">
+      <h3>Tous les tickets</h3>
+      <div class="ticket-list" id="allTicketsList" style="max-height:400px;"></div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============ MODAL LOGIN / SIGNUP ============ -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <button type="button" class="modal-close" id="closeModal">✕</button>
     <h3 id="modalTitle">Connexion</h3>
     <p class="sub" id="modalSub">Accède à ton espace client pour suivre tes commandes.</p>
-    <div class="auth-error" id="authError"></div>
-    <form id="authForm" data-mode="login">
+    <form id="authForm">
       <div class="field">
         <label>Adresse email</label>
         <input type="email" id="authEmail" required placeholder="toi@exemple.com">
       </div>
       <div class="field">
         <label>Mot de passe</label>
-        <input type="password" id="authPassword" required minlength="6" placeholder="••••••••">
+        <input type="password" id="authPassword" required placeholder="••••••••">
       </div>
       <button type="submit" class="modal-submit" id="submitBtn">Se connecter</button>
+      <div class="form-msg error" id="authMsg"></div>
     </form>
     <div class="modal-switch">
       <span id="switchText">Pas encore de compte ?</span> <a id="switchLink">Créer un compte</a>
@@ -459,10 +648,76 @@
   </div>
 </div>
 
+<!-- ============ WIDGET TICKET ============ -->
+<button type="button" class="ticket-fab" id="ticketFab" title="Support">💬</button>
+<div class="ticket-panel" id="ticketPanel">
+  <div id="ticketStepAsk">
+    <h4>Besoin d'aide ?</h4>
+    <p>Voulez-vous créer un ticket de support ?</p>
+    <div class="ticket-actions">
+      <button type="button" class="modal-submit" id="ticketYes">Oui</button>
+      <button type="button" class="modal-submit secondary" id="ticketNo">Non</button>
+    </div>
+  </div>
+  <div id="ticketStepForm" style="display:none;">
+    <h4>Nouveau ticket</h4>
+    <div class="field">
+      <label>Adresse email</label>
+      <input type="email" id="ticketEmail">
+    </div>
+    <div class="field">
+      <label>Raison</label>
+      <textarea id="ticketReason" rows="3" placeholder="Explique ta demande..."></textarea>
+    </div>
+    <div class="ticket-actions">
+      <button type="button" class="modal-submit" id="ticketAccept">Accepter</button>
+      <button type="button" class="modal-submit secondary" id="ticketCancel">Annuler</button>
+    </div>
+    <div class="form-msg" id="ticketMsg"></div>
+  </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-  // ---------- BURGER / MENU MOBILE ----------
+  /* ============================================================
+     FAUX BACKEND LOCAL (stocké dans localStorage du navigateur)
+     A remplacer par un vrai serveur/base de données plus tard.
+  ============================================================ */
+  var ADMIN_EMAIL = "top1hunterxx@gmail.com";
+
+  function loadJSON(key, fallback){
+    try{
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){ return fallback; }
+  }
+  function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+  var users   = loadJSON('nx_users', []);
+  var session = localStorage.getItem('nx_session') || null;
+  var stock   = loadJSON('nx_stock', { Basic: 8, Premium: 5, Ultimate: 2 });
+  var banned  = loadJSON('nx_banned', []);
+  var tickets = loadJSON('nx_tickets', []);
+  var pendingEmailChange = null;
+
+  function persistUsers(){ saveJSON('nx_users', users); }
+  function persistStock(){ saveJSON('nx_stock', stock); }
+  function persistBanned(){ saveJSON('nx_banned', banned); }
+  function persistTickets(){ saveJSON('nx_tickets', tickets); }
+
+  function findUser(email){
+    email = (email||'').toLowerCase().trim();
+    return users.find(function(u){ return u.email.toLowerCase() === email; });
+  }
+  function isAdmin(email){
+    return (email||'').toLowerCase().trim() === ADMIN_EMAIL;
+  }
+  function currentUser(){
+    return session ? findUser(session) : null;
+  }
+
+  /* ---------- BURGER / MENU MOBILE ---------- */
   var burger = document.getElementById('burger');
   var mobileMenu = document.getElementById('mobileMenu');
   var overlay = document.getElementById('overlay');
@@ -472,73 +727,446 @@ document.addEventListener('DOMContentLoaded', function () {
     mobileMenu.classList.remove('open');
     overlay.classList.remove('open');
   }
+  burger.addEventListener('click', function(){
+    burger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    overlay.classList.toggle('open');
+  });
+  overlay.addEventListener('click', closeMenu);
 
-  if (burger && mobileMenu && overlay) {
-    burger.addEventListener('click', function(){
-      burger.classList.toggle('open');
-      mobileMenu.classList.toggle('open');
-      overlay.classList.toggle('open');
-    });
-    overlay.addEventListener('click', closeMenu);
-    document.querySelectorAll('.mobile-menu a').forEach(function(a){
-      a.addEventListener('click', closeMenu);
-    });
+  /* ---------- NAVIGATION (ancres + changement de "page") ---------- */
+  function showView(viewId){
+    document.getElementById('mainSite').classList.remove('open');
+    document.getElementById('accountView').classList.remove('open');
+    document.getElementById('adminView').classList.remove('open');
+    if(viewId === 'mainSite'){
+      document.getElementById('mainSite').style.display = 'block';
+    }else{
+      document.getElementById('mainSite').style.display = 'none';
+      document.getElementById(viewId).classList.add('open');
+    }
+    window.scrollTo(0,0);
+    closeMenu();
+    closeAccountDropdown();
   }
 
-  // ---------- MODAL CONNEXION / INSCRIPTION (ouverture / fermeture / bascule) ----------
+  document.querySelectorAll('[data-goto]').forEach(function(a){
+    a.addEventListener('click', function(){
+      showView('mainSite');
+      setTimeout(function(){
+        var target = document.getElementById(a.getAttribute('data-goto'));
+        if(target) target.scrollIntoView({behavior:'smooth'});
+      }, 30);
+    });
+  });
+  document.querySelectorAll('[data-goto-view]').forEach(function(a){
+    a.addEventListener('click', function(){ showView(a.getAttribute('data-goto-view')); });
+  });
+  document.getElementById('brandHome').addEventListener('click', function(){ showView('mainSite'); });
+
+  /* ---------- MODAL CONNEXION / INSCRIPTION ---------- */
   var modalOverlay = document.getElementById('modalOverlay');
-  var openLoginBtn = document.getElementById('openLogin');
   var closeModalBtn = document.getElementById('closeModal');
-  var authForm = document.getElementById('authForm');
-  var authError = document.getElementById('authError');
+  var authMsg = document.getElementById('authMsg');
 
-  window.nexusOpenAuthModal = function(){
-    if (modalOverlay) modalOverlay.classList.add('open');
-  };
-
-  if (openLoginBtn && modalOverlay) {
-    openLoginBtn.addEventListener('click', function(){
-      // Si l'utilisateur est déjà connecté, ce bouton sert à se déconnecter
-      // (le script Firebase plus bas redéfinit son comportement une fois connecté).
-      if (openLoginBtn.dataset.mode === 'logout') {
-        return; // géré par le script Firebase
-      }
-      modalOverlay.classList.add('open');
-    });
+  function openLoginModal(){
+    authMsg.textContent = '';
+    document.getElementById('authForm').reset();
+    modalOverlay.classList.add('open');
   }
-  if (closeModalBtn && modalOverlay) {
-    closeModalBtn.addEventListener('click', function(){
-      modalOverlay.classList.remove('open');
-      if (authError) authError.classList.remove('show');
-    });
-  }
-  if (modalOverlay) {
-    modalOverlay.addEventListener('click', function(e){
-      if (e.target === modalOverlay){
-        modalOverlay.classList.remove('open');
-        if (authError) authError.classList.remove('show');
-      }
-    });
-  }
+  closeModalBtn.addEventListener('click', function(){ modalOverlay.classList.remove('open'); });
+  modalOverlay.addEventListener('click', function(e){
+    if (e.target === modalOverlay) modalOverlay.classList.remove('open');
+  });
 
   var isLogin = true;
   var switchLink = document.getElementById('switchLink');
-  if (switchLink) {
-    switchLink.addEventListener('click', function(){
-      isLogin = !isLogin;
-      authForm.dataset.mode = isLogin ? 'login' : 'signup';
-      document.getElementById('modalTitle').textContent = isLogin ? 'Connexion' : 'Créer un compte';
-      document.getElementById('modalSub').textContent = isLogin
-        ? "Accède à ton espace client pour suivre tes commandes."
-        : "Crée ton compte pour commander et suivre tes achats.";
-      document.getElementById('submitBtn').textContent = isLogin ? 'Se connecter' : "S'inscrire";
-      document.getElementById('switchText').textContent = isLogin ? "Pas encore de compte ?" : "Déjà un compte ?";
-      switchLink.textContent = isLogin ? "Créer un compte" : "Se connecter";
-      if (authError) authError.classList.remove('show');
+  switchLink.addEventListener('click', function(){
+    isLogin = !isLogin;
+    authMsg.textContent = '';
+    document.getElementById('modalTitle').textContent = isLogin ? 'Connexion' : 'Créer un compte';
+    document.getElementById('modalSub').textContent = isLogin
+      ? "Accède à ton espace client pour suivre tes commandes."
+      : "Crée ton compte pour commander et suivre tes achats.";
+    document.getElementById('submitBtn').textContent = isLogin ? 'Se connecter' : "S'inscrire";
+    document.getElementById('switchText').textContent = isLogin ? "Pas encore de compte ?" : "Déjà un compte ?";
+    switchLink.textContent = isLogin ? "Créer un compte" : "Se connecter";
+  });
+
+  var authForm = document.getElementById('authForm');
+  authForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var email = document.getElementById('authEmail').value.trim();
+    var password = document.getElementById('authPassword').value;
+    authMsg.textContent = '';
+
+    if(isLogin){
+      var u = findUser(email);
+      if(!u || u.password !== password){
+        authMsg.textContent = 'Email ou mot de passe incorrect.';
+        return;
+      }
+      if(banned.indexOf(u.email.toLowerCase()) !== -1){
+        authMsg.textContent = 'Ce compte a été banni.';
+        return;
+      }
+      session = u.email;
+      localStorage.setItem('nx_session', session);
+      modalOverlay.classList.remove('open');
+      renderAuthArea();
+    }else{
+      if(findUser(email)){
+        authMsg.textContent = 'Un compte existe déjà avec cet email.';
+        return;
+      }
+      if(password.length < 4){
+        authMsg.textContent = 'Mot de passe trop court (4 caractères minimum).';
+        return;
+      }
+      var newUser = { email: email, password: password };
+      users.push(newUser);
+      persistUsers();
+      session = newUser.email;
+      localStorage.setItem('nx_session', session);
+      modalOverlay.classList.remove('open');
+      renderAuthArea();
+    }
+  });
+
+  /* ---------- ZONE CONNEXION / MENU COMPTE ---------- */
+  var authArea = document.getElementById('authArea');
+
+  function closeAccountDropdown(){
+    var dd = document.getElementById('accountDropdown');
+    if(dd) dd.classList.remove('open');
+  }
+
+  function renderAuthArea(){
+    var u = currentUser();
+    if(!u){
+      authArea.innerHTML = '<button type="button" class="btn-login" id="openLogin">Connexion</button>';
+      document.getElementById('openLogin').addEventListener('click', openLoginModal);
+    }else{
+      var admin = isAdmin(u.email);
+      authArea.innerHTML =
+        '<div class="account-menu">'+
+          '<button type="button" class="btn-login" id="accountToggle">Mon compte ▾</button>'+
+          '<div class="account-dropdown" id="accountDropdown">'+
+            '<a id="ddCompte">Compte</a>'+
+            (admin ? '<a id="ddAdmin">Admin</a>' : '')+
+            '<hr>'+
+            '<a id="ddLogout" class="danger">Déconnexion</a>'+
+          '</div>'+
+        '</div>';
+
+      document.getElementById('accountToggle').addEventListener('click', function(ev){
+        ev.stopPropagation();
+        document.getElementById('accountDropdown').classList.toggle('open');
+      });
+      document.getElementById('ddCompte').addEventListener('click', function(){
+        renderAccountView();
+        showView('accountView');
+      });
+      if(admin){
+        document.getElementById('ddAdmin').addEventListener('click', function(){
+          renderAdminView();
+          showView('adminView');
+        });
+      }
+      document.getElementById('ddLogout').addEventListener('click', function(){
+        session = null;
+        localStorage.removeItem('nx_session');
+        renderAuthArea();
+        showView('mainSite');
+      });
+    }
+    renderTicketFab();
+  }
+
+  document.addEventListener('click', function(){ closeAccountDropdown(); });
+
+  /* ---------- PAGE COMPTE ---------- */
+  function renderAccountView(){
+    var u = currentUser();
+    if(!u) return;
+    document.getElementById('currentEmailLabel').textContent = u.email;
+    document.getElementById('accountAdminBadge').innerHTML = isAdmin(u.email)
+      ? '<span class="badge-admin">Compte administrateur</span>' : '';
+
+    // reset des formulaires
+    document.getElementById('emailStep1').style.display = 'block';
+    document.getElementById('emailStep2').style.display = 'none';
+    document.getElementById('newEmailInput').value = '';
+    document.getElementById('verifyCodeInput').value = '';
+    document.getElementById('emailMsg').textContent = '';
+    document.getElementById('currentPasswordInput').value = '';
+    document.getElementById('newPasswordInput').value = '';
+    document.getElementById('confirmPasswordInput').value = '';
+    document.getElementById('passwordMsg').textContent = '';
+
+    renderMyTickets();
+  }
+
+  document.getElementById('sendCodeBtn').addEventListener('click', function(){
+    var newEmail = document.getElementById('newEmailInput').value.trim();
+    var msg = document.getElementById('emailMsg');
+    msg.className = 'form-msg';
+    if(!newEmail || newEmail.indexOf('@') === -1){
+      msg.classList.add('error'); msg.textContent = 'Adresse email invalide.'; return;
+    }
+    if(findUser(newEmail)){
+      msg.classList.add('error'); msg.textContent = 'Cet email est déjà utilisé.'; return;
+    }
+    var code = String(Math.floor(100000 + Math.random()*900000));
+    pendingEmailChange = { newEmail: newEmail, code: code };
+    // Simulation d'envoi d'email (pas de serveur mail branché)
+    alert('Un code de vérification a été envoyé à ' + newEmail + ' :\n\n' + code);
+    document.getElementById('emailStep1').style.display = 'none';
+    document.getElementById('emailStep2').style.display = 'block';
+    msg.textContent = 'Code envoyé. Vérifie ta boîte mail.';
+    msg.classList.add('success');
+  });
+
+  document.getElementById('confirmEmailBtn').addEventListener('click', function(){
+    var msg = document.getElementById('emailMsg');
+    msg.className = 'form-msg';
+    var code = document.getElementById('verifyCodeInput').value.trim();
+    if(!pendingEmailChange || code !== pendingEmailChange.code){
+      msg.classList.add('error'); msg.textContent = 'Code incorrect.'; return;
+    }
+    var u = currentUser();
+    var wasAdminSession = session;
+    u.email = pendingEmailChange.newEmail;
+    persistUsers();
+    session = u.email;
+    localStorage.setItem('nx_session', session);
+    pendingEmailChange = null;
+    msg.classList.add('success'); msg.textContent = 'Email mis à jour avec succès.';
+    renderAuthArea();
+    renderAccountView();
+  });
+
+  document.getElementById('cancelEmailBtn').addEventListener('click', function(){
+    pendingEmailChange = null;
+    document.getElementById('emailStep1').style.display = 'block';
+    document.getElementById('emailStep2').style.display = 'none';
+    document.getElementById('emailMsg').textContent = '';
+  });
+
+  document.getElementById('changePasswordBtn').addEventListener('click', function(){
+    var msg = document.getElementById('passwordMsg');
+    msg.className = 'form-msg';
+    var u = currentUser();
+    var cur = document.getElementById('currentPasswordInput').value;
+    var nw = document.getElementById('newPasswordInput').value;
+    var conf = document.getElementById('confirmPasswordInput').value;
+
+    if(cur !== u.password){
+      msg.classList.add('error'); msg.textContent = 'Mot de passe actuel incorrect.'; return;
+    }
+    if(nw.length < 4){
+      msg.classList.add('error'); msg.textContent = 'Le nouveau mot de passe est trop court.'; return;
+    }
+    if(nw !== conf){
+      msg.classList.add('error'); msg.textContent = 'Les mots de passe ne correspondent pas.'; return;
+    }
+    u.password = nw;
+    persistUsers();
+    msg.classList.add('success'); msg.textContent = 'Mot de passe changé avec succès.';
+    document.getElementById('currentPasswordInput').value = '';
+    document.getElementById('newPasswordInput').value = '';
+    document.getElementById('confirmPasswordInput').value = '';
+  });
+
+  /* ---------- STOCK (affichage public + gestion admin) ---------- */
+  function renderStockPublic(){
+    ['Basic','Premium','Ultimate'].forEach(function(tier){
+      var el = document.querySelector('[data-stock-display="'+tier+'"]');
+      var qty = stock[tier] || 0;
+      el.innerHTML = 'Stock : <b>' + qty + '</b>';
+      el.classList.toggle('empty', qty <= 0);
+      var btn = document.querySelector('.tier-buy[data-tier="'+tier+'"]');
+      if(qty <= 0){
+        btn.disabled = true;
+        btn.textContent = 'Rupture de stock';
+      }else{
+        btn.disabled = false;
+        btn.textContent = 'Acheter avec PayPal';
+      }
     });
   }
 
-  // ---------- BOUTONS PAYPAL ----------
+  function renderStockManager(){
+    var box = document.getElementById('stockManager');
+    box.innerHTML = '';
+    ['Basic','Premium','Ultimate'].forEach(function(tier){
+      var row = document.createElement('div');
+      row.className = 'stock-row';
+      row.innerHTML = '<span>'+tier+'</span><input type="number" min="0" value="'+(stock[tier]||0)+'" data-stock-input="'+tier+'"><button type="button" class="mini-btn" data-stock-save="'+tier+'">Mettre à jour</button>';
+      box.appendChild(row);
+    });
+    box.querySelectorAll('[data-stock-save]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var tier = btn.getAttribute('data-stock-save');
+        var input = box.querySelector('[data-stock-input="'+tier+'"]');
+        var val = Math.max(0, parseInt(input.value, 10) || 0);
+        stock[tier] = val;
+        persistStock();
+        renderStockPublic();
+        alert('Stock de ' + tier + ' mis à jour : ' + val);
+      });
+    });
+  }
+
+  /* ---------- BAN ---------- */
+  function renderBannedTable(){
+    var tbody = document.querySelector('#bannedTable tbody');
+    tbody.innerHTML = '';
+    if(banned.length === 0){
+      tbody.innerHTML = '<tr><td colspan="2" class="empty-note">Aucun membre banni.</td></tr>';
+      return;
+    }
+    banned.forEach(function(email){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+email+'</td><td><button type="button" class="mini-btn" data-unban="'+email+'">Débannir</button></td>';
+      tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('[data-unban]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var email = btn.getAttribute('data-unban');
+        banned = banned.filter(function(e){ return e !== email; });
+        persistBanned();
+        renderBannedTable();
+      });
+    });
+  }
+
+  document.getElementById('banBtn').addEventListener('click', function(){
+    var msg = document.getElementById('banMsg');
+    msg.className = 'form-msg';
+    var email = document.getElementById('banEmailInput').value.trim().toLowerCase();
+    if(!email || email.indexOf('@') === -1){
+      msg.classList.add('error'); msg.textContent = 'Adresse email invalide.'; return;
+    }
+    if(isAdmin(email)){
+      msg.classList.add('error'); msg.textContent = "Impossible de bannir l'administrateur."; return;
+    }
+    if(banned.indexOf(email) === -1) banned.push(email);
+    persistBanned();
+    document.getElementById('banEmailInput').value = '';
+    msg.classList.add('success'); msg.textContent = 'Membre banni : ' + email;
+    renderBannedTable();
+  });
+
+  /* ---------- PAGE ADMIN ---------- */
+  function renderAdminView(){
+    renderStockManager();
+    renderBannedTable();
+    renderAllTickets();
+  }
+
+  /* ---------- TICKETS ---------- */
+  var ticketFab = document.getElementById('ticketFab');
+  var ticketPanel = document.getElementById('ticketPanel');
+  var ticketStepAsk = document.getElementById('ticketStepAsk');
+  var ticketStepForm = document.getElementById('ticketStepForm');
+
+  function renderTicketFab(){
+    // Le bouton reste visible pour tout le monde (invités compris)
+    ticketFab.style.display = 'flex';
+  }
+
+  ticketFab.addEventListener('click', function(ev){
+    ev.stopPropagation();
+    ticketPanel.classList.toggle('open');
+    ticketStepAsk.style.display = 'block';
+    ticketStepForm.style.display = 'none';
+    document.getElementById('ticketMsg').textContent = '';
+  });
+  document.addEventListener('click', function(e){
+    if(!ticketPanel.contains(e.target) && e.target !== ticketFab){
+      ticketPanel.classList.remove('open');
+    }
+  });
+
+  document.getElementById('ticketNo').addEventListener('click', function(){
+    ticketPanel.classList.remove('open');
+  });
+
+  document.getElementById('ticketYes').addEventListener('click', function(){
+    var u = currentUser();
+    if(!u){
+      ticketPanel.classList.remove('open');
+      openLoginModal();
+      return;
+    }
+    ticketStepAsk.style.display = 'none';
+    ticketStepForm.style.display = 'block';
+    document.getElementById('ticketEmail').value = u.email;
+    document.getElementById('ticketReason').value = '';
+  });
+
+  document.getElementById('ticketCancel').addEventListener('click', function(){
+    ticketPanel.classList.remove('open');
+  });
+
+  document.getElementById('ticketAccept').addEventListener('click', function(){
+    var msg = document.getElementById('ticketMsg');
+    msg.className = 'form-msg';
+    var email = document.getElementById('ticketEmail').value.trim();
+    var reason = document.getElementById('ticketReason').value.trim();
+    if(!email || email.indexOf('@') === -1){
+      msg.classList.add('error'); msg.textContent = 'Adresse email invalide.'; return;
+    }
+    if(!reason){
+      msg.classList.add('error'); msg.textContent = 'Merci de préciser la raison.'; return;
+    }
+    tickets.push({
+      id: Date.now(),
+      email: email,
+      reason: reason,
+      date: new Date().toLocaleString('fr-FR')
+    });
+    persistTickets();
+    msg.classList.add('success'); msg.textContent = 'Ticket créé avec succès.';
+    setTimeout(function(){ ticketPanel.classList.remove('open'); }, 900);
+    renderMyTickets();
+    renderAllTickets();
+  });
+
+  function renderMyTickets(){
+    var box = document.getElementById('myTicketsList');
+    var u = currentUser();
+    if(!box || !u) return;
+    var mine = tickets.filter(function(t){ return t.email.toLowerCase() === u.email.toLowerCase(); });
+    if(mine.length === 0){
+      box.innerHTML = '<div class="empty-note">Tu n\'as pas encore de ticket.</div>';
+      return;
+    }
+    box.innerHTML = mine.slice().reverse().map(function(t){
+      return '<div class="ticket-item"><b>'+t.date+'</b><div class="ticket-reason">'+escapeHTML(t.reason)+'</div></div>';
+    }).join('');
+  }
+
+  function renderAllTickets(){
+    var box = document.getElementById('allTicketsList');
+    if(!box) return;
+    if(tickets.length === 0){
+      box.innerHTML = '<div class="empty-note">Aucun ticket pour le moment.</div>';
+      return;
+    }
+    box.innerHTML = tickets.slice().reverse().map(function(t){
+      return '<div class="ticket-item"><b>'+escapeHTML(t.email)+'</b> — '+t.date+'<div class="ticket-reason">'+escapeHTML(t.reason)+'</div></div>';
+    }).join('');
+  }
+
+  function escapeHTML(str){
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /* ---------- BOUTONS PAYPAL ---------- */
   var paypalUser = "YakoubOkbi";
 
   function payWith(tier, amount){
@@ -554,110 +1182,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.querySelectorAll('.tier-buy').forEach(function(btn){
     btn.addEventListener('click', function(){
+      if(btn.disabled) return;
       var tier = btn.getAttribute('data-tier');
       var amount = btn.getAttribute('data-amount');
       payWith(tier, amount);
     });
   });
 
+  /* ---------- INIT ---------- */
+  renderAuthArea();
+  renderStockPublic();
+  showView('mainSite');
 });
-</script>
-
-<!-- ---------- FIREBASE AUTHENTICATION ---------- -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-  import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDrooXt8dTT8z2cI7R6qOWaYsyBebhBQRU",
-    authDomain: "nexus-fe190.firebaseapp.com",
-    projectId: "nexus-fe190",
-    storageBucket: "nexus-fe190.firebasestorage.app",
-    messagingSenderId: "1048313829167",
-    appId: "1:1048313829167:web:0e8905266bc1a7ea3bf3da"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  const openLoginBtn = document.getElementById('openLogin');
-  const modalOverlay = document.getElementById('modalOverlay');
-  const authForm = document.getElementById('authForm');
-  const authError = document.getElementById('authError');
-  const submitBtn = document.getElementById('submitBtn');
-  const emailInput = document.getElementById('authEmail');
-  const passwordInput = document.getElementById('authPassword');
-
-  function showError(message){
-    authError.textContent = message;
-    authError.classList.add('show');
-  }
-
-  function traduireErreur(code){
-    switch(code){
-      case 'auth/email-already-in-use': return "Cette adresse email est déjà utilisée.";
-      case 'auth/invalid-email': return "Adresse email invalide.";
-      case 'auth/weak-password': return "Le mot de passe doit contenir au moins 6 caractères.";
-      case 'auth/invalid-credential':
-      case 'auth/wrong-password':
-      case 'auth/user-not-found': return "Email ou mot de passe incorrect.";
-      case 'auth/too-many-requests': return "Trop de tentatives, réessaie dans quelques instants.";
-      default: return "Une erreur est survenue. Réessaie.";
-    }
-  }
-
-  // Soumission du formulaire (connexion ou inscription selon authForm.dataset.mode)
-  authForm.addEventListener('submit', function(e){
-    e.preventDefault();
-    authError.classList.remove('show');
-    submitBtn.disabled = true;
-
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-    const mode = authForm.dataset.mode; // 'login' ou 'signup'
-
-    const action = mode === 'signup'
-      ? createUserWithEmailAndPassword(auth, email, password)
-      : signInWithEmailAndPassword(auth, email, password);
-
-    action
-      .then(function(){
-        modalOverlay.classList.remove('open');
-        authForm.reset();
-      })
-      .catch(function(err){
-        showError(traduireErreur(err.code));
-      })
-      .finally(function(){
-        submitBtn.disabled = false;
-      });
-  });
-
-  // Met à jour le bouton "Connexion" du header selon l'état de connexion
-  onAuthStateChanged(auth, function(user){
-    if (user) {
-      openLoginBtn.textContent = user.email;
-      openLoginBtn.dataset.mode = 'logout';
-      openLoginBtn.title = "Cliquer pour se déconnecter";
-    } else {
-      openLoginBtn.textContent = 'Connexion';
-      openLoginBtn.dataset.mode = 'login';
-      openLoginBtn.title = '';
-    }
-  });
-
-  // Clic sur le bouton du header : ouvre la modale si déconnecté, déconnecte sinon
-  openLoginBtn.addEventListener('click', function(){
-    if (openLoginBtn.dataset.mode === 'logout') {
-      signOut(auth);
-    }
-  });
 </script>
 
 </body>
