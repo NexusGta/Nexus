@@ -63,7 +63,6 @@
   }
   .btn-login:hover{border-color:var(--blue-bright); color:var(--cyan);}
 
-  /* ---- menu compte connecté ---- */
   .account-menu{position:relative;}
   .account-dropdown{
     position:absolute; top:calc(100% + 10px); right:0; min-width:190px;
@@ -281,12 +280,11 @@
   .form-msg.error{color:var(--red);}
   .form-msg.success{color:var(--cyan);}
 
-  /* ---- pages compte / admin ---- */
   .page-view{display:none; padding:150px 5% 100px; position:relative; z-index:1; min-height:100vh;}
   .page-view.open{display:block;}
   .page-back{
     color:var(--muted); text-decoration:none; font-size:.85rem; cursor:pointer;
-    display:inline-flex; align-items:center; gap:6px; margin-bottom:30px;
+    display:inline-flex; align-items:center; gap:6px; margin-bottom:30px; background:none; border:none;
   }
   .page-back:hover{color:var(--cyan);}
   .page-title{color:#fff; font-size:2rem; margin-bottom:36px;}
@@ -322,7 +320,7 @@
   .empty-note{color:var(--muted); font-size:.85rem; padding:14px 0;}
   .ticket-reason{color:var(--muted); font-size:.82rem; margin-top:2px;}
 
-  /* ---- widget ticket ---- */
+  /* ---- widget ticket / support chat ---- */
   .ticket-fab{
     position:fixed; bottom:26px; right:26px; z-index:250;
     width:58px; height:58px; border-radius:50%;
@@ -333,43 +331,80 @@
   }
   .ticket-fab:hover{filter:brightness(1.1);}
   .ticket-panel{
-    position:fixed; bottom:96px; right:26px; z-index:250; width:320px;
+    position:fixed; bottom:96px; right:26px; z-index:250; width:340px; max-width:calc(100vw - 32px);
     background:var(--panel); border:1px solid var(--line); border-radius:16px;
-    padding:22px; display:none; box-shadow:0 20px 50px -14px rgba(0,0,0,.7);
+    display:none; flex-direction:column; box-shadow:0 20px 50px -14px rgba(0,0,0,.7);
+    max-height:72vh; overflow:hidden;
   }
-  .ticket-panel.open{display:block;}
+  .ticket-panel.open{display:flex;}
   .ticket-panel h4{color:#fff; font-size:1.05rem; margin-bottom:6px;}
-  .ticket-panel p{color:var(--muted); font-size:.82rem; margin-bottom:16px;}
-  .ticket-actions{display:flex; gap:10px;}
-  .ticket-list{max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-top:10px;}
-  .ticket-item{
+  .ticket-panel p{color:var(--muted); font-size:.82rem; margin-bottom:14px;}
+  .ticket-panel-inner{padding:20px; overflow-y:auto;}
+  .thread-summary{
     background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:12px;
-    font-size:.82rem;
+    cursor:pointer; transition:border-color .2s; margin-bottom:8px;
   }
-  .ticket-item b{color:#fff; font-size:.85rem;}
-  .ticket-reply{
-    margin-top:8px; padding-top:8px; border-top:1px solid var(--line);
-    color:var(--cyan); font-size:.82rem;
+  .thread-summary:hover{border-color:rgba(94,231,255,.4);}
+  .thread-summary .t-date{color:var(--muted); font-size:.72rem;}
+  .thread-summary .t-preview{color:var(--text); font-size:.82rem; margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .ticket-new-box{
+    border-top:1px solid var(--line); padding-top:14px; margin-top:14px; display:flex; flex-direction:column; gap:8px;
   }
-  .ticket-reply b{color:var(--cyan);}
-  .ticket-reply-form{display:flex; flex-direction:column; gap:8px; margin-top:10px;}
-  .ticket-reply-form textarea{
-    background:var(--panel); border:1px solid var(--line); color:var(--text);
-    padding:8px 10px; border-radius:7px; font-size:.82rem; font-family:'Inter',sans-serif; resize:vertical;
+  .ticket-new-box label{font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em;}
+  .ticket-new-box textarea{
+    background:var(--panel2); border:1px solid var(--line); color:var(--text);
+    padding:10px 12px; border-radius:8px; font-size:.86rem; font-family:'Inter',sans-serif; resize:vertical;
   }
+  .thread-header{
+    display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--line);
+    flex-shrink:0;
+  }
+  .thread-back{background:none; border:none; color:var(--muted); cursor:pointer; font-size:.85rem;}
+  .thread-back:hover{color:var(--cyan);}
+  .thread-messages{
+    flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px; min-height:180px;
+  }
+  .bubble{
+    max-width:82%; padding:9px 13px; border-radius:14px; font-size:.85rem; line-height:1.4; word-wrap:break-word;
+  }
+  .bubble .b-date{display:block; font-size:.68rem; opacity:.65; margin-top:3px;}
+  .bubble.from-user{align-self:flex-end; background:linear-gradient(90deg,var(--blue),var(--blue-bright)); color:#fff; border-bottom-right-radius:4px;}
+  .bubble.from-admin{align-self:flex-start; background:var(--panel2); border:1px solid var(--line); color:var(--text); border-bottom-left-radius:4px;}
+  .thread-input-row{
+    display:flex; gap:8px; padding:14px 16px; border-top:1px solid var(--line); flex-shrink:0;
+  }
+  .thread-input-row textarea{
+    flex:1; background:var(--panel2); border:1px solid var(--line); color:var(--text);
+    padding:9px 12px; border-radius:9px; font-size:.85rem; font-family:'Inter',sans-serif; resize:none;
+  }
+  .thread-send-btn{
+    background:linear-gradient(90deg,var(--blue),var(--blue-bright)); color:#fff; border:none;
+    padding:0 16px; border-radius:9px; font-weight:600; cursor:pointer; font-size:.85rem;
+  }
+
+  /* ---- admin : liste + conversation côte à côte ---- */
+  .admin-tickets-layout{display:flex; gap:20px; flex-wrap:wrap;}
+  .admin-tickets-col-list{flex:1; min-width:230px; max-width:340px; max-height:520px; overflow-y:auto;}
+  .admin-tickets-col-thread{
+    flex:2; min-width:280px; background:var(--panel2); border:1px solid var(--line); border-radius:12px;
+    display:flex; flex-direction:column; min-height:420px; max-height:520px; overflow:hidden;
+  }
+  .admin-tickets-col-thread .thread-messages{padding:16px;}
+  .admin-tickets-col-thread .empty-note{padding:20px;}
 
   /* ---- commandes ---- */
   .order-item{
     background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
-    font-size:.85rem; cursor:pointer; transition:border-color .2s;
+    font-size:.85rem; margin-bottom:10px;
   }
-  .order-item:hover{border-color:rgba(94,231,255,.35);}
   .order-status{
     display:inline-flex; align-items:center; gap:6px; font-size:.72rem; text-transform:uppercase;
     letter-spacing:.06em; padding:3px 10px; border-radius:20px; margin-left:8px;
   }
   .order-status.pending{background:rgba(232,196,119,.12); color:var(--gold); border:1px solid rgba(232,196,119,.3);}
   .order-status.confirmed{background:rgba(62,207,106,.12); color:var(--green); border:1px solid rgba(62,207,106,.3);}
+  .order-status.declined{background:rgba(255,92,106,.12); color:var(--red); border:1px solid rgba(255,92,106,.3);}
+  .order-actions{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;}
   .order-creds{
     margin-top:10px; padding-top:10px; border-top:1px solid var(--line);
     display:flex; flex-direction:column; gap:4px; font-size:.82rem; color:var(--text);
@@ -377,13 +412,12 @@
   .order-creds b{color:var(--cyan);}
   .order-locked{color:var(--muted); font-size:.82rem; margin-top:8px;}
 
-  /* ---- toast notification ---- */
   .toast{
     position:fixed; top:90px; left:50%; transform:translateX(-50%) translateY(-20px);
     z-index:400; background:rgba(255,92,106,.15); border:1px solid rgba(255,92,106,.5);
     color:#ffd3d7; padding:14px 22px; border-radius:10px; font-size:.9rem; font-weight:600;
     opacity:0; pointer-events:none; transition:all .3s; backdrop-filter:blur(10px);
-    box-shadow:0 14px 30px -10px rgba(255,92,106,.4);
+    box-shadow:0 14px 30px -10px rgba(255,92,106,.4); max-width:88vw; text-align:center;
   }
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
@@ -405,7 +439,7 @@
     <a data-goto="categorie">Catégorie</a>
     <a data-goto="offres">Offres</a>
     <a data-goto="confiance">Sécurité</a>
-    <a id="navOrders" data-goto-view="ordersView">Commandes</a>
+    <a data-goto-view="ordersView">Commandes</a>
   </nav>
   <div class="header-actions">
     <div id="authArea"></div>
@@ -425,7 +459,6 @@
 <!-- ============ SITE PRINCIPAL ============ -->
 <div id="mainSite">
 
-<!-- HERO -->
 <section class="hero" id="accueil">
   <div class="eyebrow">Livraison instantanée · Paiement sécurisé PayPal</div>
   <h1>Des comptes GTA 5 <span class="grad">prêts à dominer</span> Los Santos</h1>
@@ -441,7 +474,6 @@
   </div>
 </section>
 
-<!-- CATEGORIE -->
 <section id="categorie">
   <div class="section-head">
     <div class="tag">Catalogue</div>
@@ -456,7 +488,6 @@
   </div>
 </section>
 
-<!-- OFFRES -->
 <section id="offres">
   <div class="section-head">
     <div class="tag">Offres</div>
@@ -466,7 +497,6 @@
 
   <div class="pricing-grid">
 
-    <!-- BASIC -->
     <div class="tier" data-tier-card="Basic">
       <div class="tier-name">Basic</div>
       <div class="tier-price"><b>10€</b> <span>/ compte</span></div>
@@ -492,7 +522,6 @@
       <button type="button" class="tier-buy" data-tier="Basic" data-amount="10">Acheter avec PayPal</button>
     </div>
 
-    <!-- PREMIUM -->
     <div class="tier featured" data-tier-card="Premium">
       <div class="featured-tag">Le plus choisi</div>
       <div class="tier-name">Premium</div>
@@ -519,7 +548,6 @@
       <button type="button" class="tier-buy" data-tier="Premium" data-amount="25">Acheter avec PayPal</button>
     </div>
 
-    <!-- ULTIMATE -->
     <div class="tier" data-tier-card="Ultimate">
       <div class="tier-name">Ultimate</div>
       <div class="tier-price"><b>30€</b> <span>/ compte</span></div>
@@ -548,7 +576,6 @@
   </div>
 </section>
 
-<!-- CONFIANCE -->
 <section id="confiance">
   <div class="section-head">
     <div class="tag">Sécurité</div>
@@ -627,11 +654,6 @@
       <div class="form-msg" id="passwordMsg"></div>
     </div>
 
-    <div class="settings-card">
-      <h3>Mes tickets</h3>
-      <div class="ticket-list" id="myTicketsList"></div>
-    </div>
-
   </div>
 </div>
 
@@ -667,7 +689,12 @@
 
     <div class="settings-card" style="grid-column:1/-1;">
       <h3>Tous les tickets</h3>
-      <div class="ticket-list" id="allTicketsList" style="max-height:500px;"></div>
+      <div class="admin-tickets-layout">
+        <div class="admin-tickets-col-list" id="adminTicketList"></div>
+        <div class="admin-tickets-col-thread" id="adminTicketThreadPane">
+          <div class="empty-note">Sélectionne un ticket dans la liste pour voir la conversation.</div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -680,13 +707,13 @@
   <div class="card-grid">
 
     <div class="settings-card">
-      <h3 id="myOrdersTitle">Mes commandes</h3>
-      <div class="ticket-list" id="myOrdersList" style="max-height:600px;"></div>
+      <h3>Mes commandes</h3>
+      <div id="myOrdersList"></div>
     </div>
 
     <div class="settings-card" id="adminOrdersCard" style="display:none;">
       <h3>Toutes les commandes (admin)</h3>
-      <div class="ticket-list" id="allOrdersList" style="max-height:600px;"></div>
+      <div id="allOrdersList" style="max-height:600px; overflow-y:auto;"></div>
     </div>
 
   </div>
@@ -717,36 +744,40 @@
   </div>
 </div>
 
-<!-- ============ WIDGET TICKET ============ -->
+<!-- ============ WIDGET TICKET / SUPPORT CHAT ============ -->
 <button type="button" class="ticket-fab" id="ticketFab" title="Support">💬</button>
 <div class="ticket-panel" id="ticketPanel">
-  <div id="ticketStepAsk">
+
+  <div class="ticket-panel-inner" id="ticketGuestView" style="display:none;">
     <h4>Besoin d'aide ?</h4>
-    <p>Voulez-vous créer un ticket de support ?</p>
-    <div class="ticket-actions">
-      <button type="button" class="modal-submit" id="ticketYes">Oui</button>
-      <button type="button" class="modal-submit secondary" id="ticketNo">Non</button>
+    <p>Connecte-toi pour accéder au support et voir tes conversations.</p>
+    <button type="button" class="modal-submit" id="ticketGuestLoginBtn">Se connecter</button>
+  </div>
+
+  <div class="ticket-panel-inner" id="ticketListView" style="display:none;">
+    <h4>Support</h4>
+    <p>Tes conversations avec l'équipe.</p>
+    <div id="myThreadList"></div>
+    <div class="ticket-new-box">
+      <label>Créer un nouveau ticket</label>
+      <textarea id="newTicketReason" rows="2" placeholder="Explique ta demande..."></textarea>
+      <button type="button" class="modal-submit" id="createTicketBtn">Créer le ticket</button>
+      <div class="form-msg" id="newTicketMsg"></div>
     </div>
   </div>
-  <div id="ticketStepForm" style="display:none;">
-    <h4>Nouveau ticket</h4>
-    <div class="field">
-      <label>Adresse email</label>
-      <input type="email" id="ticketEmail">
+
+  <div id="ticketThreadView" style="display:none; flex-direction:column; min-height:0; flex:1;">
+    <div class="thread-header">
+      <button type="button" class="thread-back" id="ticketThreadBack">← Retour</button>
     </div>
-    <div class="field">
-      <label>Raison</label>
-      <textarea id="ticketReason" rows="3" placeholder="Explique ta demande..."></textarea>
+    <div class="thread-messages" id="ticketThreadMessages"></div>
+    <div class="thread-input-row">
+      <textarea id="ticketThreadInput" rows="1" placeholder="Écrire un message..."></textarea>
+      <button type="button" class="thread-send-btn" id="ticketThreadSend">Envoyer</button>
     </div>
-    <div class="ticket-actions">
-      <button type="button" class="modal-submit" id="ticketAccept">Accepter</button>
-      <button type="button" class="modal-submit secondary" id="ticketCancel">Annuler</button>
-    </div>
-    <div class="form-msg" id="ticketMsg"></div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -771,16 +802,17 @@ document.addEventListener('DOMContentLoaded', function () {
     {key:'character', col:'character_name', label:'Character'}
   ];
 
-  // Caches locales, resynchronisées avec Supabase à chaque chargement/action
   var users = [];
-  var session = localStorage.getItem('nx_session') || null; // identité de connexion, propre à cet appareil
+  var session = localStorage.getItem('nx_session') || null;
   var stockItems = { Basic: [], Premium: [], Ultimate: [] };
   var banned = [];
   var tickets = [];
+  var ticketMessages = []; // { id, ticketId, sender:'user'|'admin', message, date }
   var orders = [];
   var pendingEmailChange = null;
   var currentView = 'mainSite';
-  var dataReady = false;
+  var openThreadId = null;          // ticket ouvert dans le widget flottant (client)
+  var adminSelectedTicketId = null; // ticket sélectionné dans la page admin
 
   function findUser(email){
     email = (email||'').toLowerCase().trim();
@@ -792,7 +824,11 @@ document.addEventListener('DOMContentLoaded', function () {
   function currentUser(){
     return session ? findUser(session) : null;
   }
-
+  function escapeHTML(str){
+    var div = document.createElement('div');
+    div.textContent = str == null ? '' : str;
+    return div.innerHTML;
+  }
   function stockItemFromRow(row){
     var item = { id: row.id, tier: row.tier };
     STOCK_FIELDS.forEach(function(f){ item[f.key] = row[f.col]; });
@@ -802,11 +838,12 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ---------- CHARGEMENT / SYNCHRONISATION DEPUIS SUPABASE ---------- */
   async function loadAllData(){
     try{
-      var [usersRes, stockRes, bannedRes, ticketsRes, ordersRes] = await Promise.all([
+      var [usersRes, stockRes, bannedRes, ticketsRes, msgRes, ordersRes] = await Promise.all([
         sb.from('users').select('*'),
         sb.from('stock_items').select('*').order('created_at', {ascending:true}),
         sb.from('banned').select('*'),
         sb.from('tickets').select('*').order('created_at', {ascending:true}),
+        sb.from('ticket_messages').select('*').order('created_at', {ascending:true}),
         sb.from('orders').select('*').order('created_at', {ascending:true})
       ]);
 
@@ -820,18 +857,30 @@ document.addEventListener('DOMContentLoaded', function () {
       });
 
       tickets = (ticketsRes.data || []).map(function(t){
-        return { id:t.id, email:t.email, reason:t.reason, date:t.date, reply:t.reply, replyDate:t.reply_date };
+        return { id:t.id, email:t.email, reason:t.reason, date:t.date };
+      });
+
+      ticketMessages = (msgRes.data || []).map(function(m){
+        return { id:m.id, ticketId:m.ticket_id, sender:m.sender, message:m.message, date:m.date };
       });
 
       orders = (ordersRes.data || []).map(function(o){
         return { id:o.id, tier:o.tier, amount:o.amount, buyerEmail:o.buyer_email, level:o.level, status:o.status, account:o.account, date:o.date };
       });
-
-      dataReady = true;
     }catch(e){
-      showToast('Connexion à la base de données impossible. Vérifie ta connexion internet.');
       console.error(e);
     }
+  }
+
+  /* ---------- Messages d'un ticket : fusionne raison initiale + table ticket_messages ---------- */
+  function messagesForTicket(ticketId){
+    var t = tickets.find(function(tt){ return tt.id === ticketId; });
+    var msgs = ticketMessages.filter(function(m){ return m.ticketId === ticketId; });
+    // Si aucun message stocké pour ce ticket, on reconstruit le premier message à partir de la raison
+    if(msgs.length === 0 && t){
+      return [{ id:'seed-'+t.id, ticketId:t.id, sender:'user', message:t.reason, date:t.date }];
+    }
+    return msgs;
   }
 
   function renderCurrentView(){
@@ -840,6 +889,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if(currentView === 'accountView') renderAccountView();
     if(currentView === 'adminView') renderAdminView();
     if(currentView === 'ordersView') renderOrdersView();
+    renderTicketWidget();
   }
 
   /* ---------- TOAST ---------- */
@@ -849,13 +899,7 @@ document.addEventListener('DOMContentLoaded', function () {
     clearTimeout(toastTimer);
     toastEl.textContent = msg;
     toastEl.classList.add('show');
-    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 3200);
-  }
-
-  function escapeHTML(str){
-    var div = document.createElement('div');
-    div.textContent = str == null ? '' : str;
-    return div.innerHTML;
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 3500);
   }
 
   /* ---------- BURGER / MENU MOBILE ---------- */
@@ -875,7 +919,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   overlay.addEventListener('click', closeMenu);
 
-  /* ---------- NAVIGATION (ancres + changement de "page") ---------- */
+  /* ---------- NAVIGATION ---------- */
   async function showView(viewId){
     document.getElementById('mainSite').classList.remove('open');
     document.getElementById('accountView').classList.remove('open');
@@ -945,7 +989,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   var authForm = document.getElementById('authForm');
-  var pendingPurchase = null;
 
   authForm.addEventListener('submit', async function(e){
     e.preventDefault();
@@ -954,49 +997,45 @@ document.addEventListener('DOMContentLoaded', function () {
     var password = document.getElementById('authPassword').value;
     authMsg.textContent = '';
     submitBtn.disabled = true;
-
-    await loadAllData(); // s'assurer d'avoir la liste d'utilisateurs à jour avant de vérifier
+    await loadAllData();
 
     if(isLogin){
       var u = findUser(email);
       if(!u || u.password !== password){
         authMsg.textContent = 'Email ou mot de passe incorrect.';
-        submitBtn.disabled = false;
-        return;
+        submitBtn.disabled = false; return;
       }
       if(banned.indexOf(u.email.toLowerCase()) !== -1){
         authMsg.textContent = 'Ce compte a été banni.';
-        submitBtn.disabled = false;
-        return;
+        submitBtn.disabled = false; return;
       }
       session = u.email;
       localStorage.setItem('nx_session', session);
       modalOverlay.classList.remove('open');
       submitBtn.disabled = false;
       renderAuthArea();
+      renderTicketWidget();
     }else{
       if(findUser(email)){
         authMsg.textContent = 'Un compte existe déjà avec cet email.';
-        submitBtn.disabled = false;
-        return;
+        submitBtn.disabled = false; return;
       }
       if(password.length < 4){
         authMsg.textContent = 'Mot de passe trop court (4 caractères minimum).';
-        submitBtn.disabled = false;
-        return;
+        submitBtn.disabled = false; return;
       }
-      var {error} = await sb.from('users').insert({ email: email, password: password });
+      var res = await sb.from('users').insert({ email: email, password: password });
       submitBtn.disabled = false;
-      if(error){
+      if(res.error){
         authMsg.textContent = "Erreur lors de la création du compte.";
-        console.error(error);
-        return;
+        console.error(res.error); return;
       }
       await loadAllData();
       session = email;
       localStorage.setItem('nx_session', session);
       modalOverlay.classList.remove('open');
       renderAuthArea();
+      renderTicketWidget();
     }
   });
 
@@ -1031,27 +1070,21 @@ document.addEventListener('DOMContentLoaded', function () {
         ev.stopPropagation();
         document.getElementById('accountDropdown').classList.toggle('open');
       });
-      document.getElementById('ddCompte').addEventListener('click', function(){
-        showView('accountView');
-      });
-      document.getElementById('ddOrders').addEventListener('click', function(){
-        showView('ordersView');
-      });
+      document.getElementById('ddCompte').addEventListener('click', function(){ showView('accountView'); });
+      document.getElementById('ddOrders').addEventListener('click', function(){ showView('ordersView'); });
       if(admin){
-        document.getElementById('ddAdmin').addEventListener('click', function(){
-          showView('adminView');
-        });
+        document.getElementById('ddAdmin').addEventListener('click', function(){ showView('adminView'); });
       }
       document.getElementById('ddLogout').addEventListener('click', function(){
         session = null;
         localStorage.removeItem('nx_session');
+        openThreadId = null;
         renderAuthArea();
+        renderTicketWidget();
         showView('mainSite');
       });
     }
-    renderTicketFab();
   }
-
   document.addEventListener('click', function(){ closeAccountDropdown(); });
 
   /* ---------- PAGE COMPTE ---------- */
@@ -1071,8 +1104,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('newPasswordInput').value = '';
     document.getElementById('confirmPasswordInput').value = '';
     document.getElementById('passwordMsg').textContent = '';
-
-    renderMyTickets();
   }
 
   document.getElementById('sendCodeBtn').addEventListener('click', async function(){
@@ -1106,9 +1137,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var oldEmail = u.email;
     var newEmail = pendingEmailChange.newEmail;
 
-    var {error} = await sb.from('users').update({ email: newEmail }).eq('email', oldEmail);
-    if(error){
-      msg.classList.add('error'); msg.textContent = "Erreur lors de la mise à jour."; console.error(error); return;
+    var res = await sb.from('users').update({ email: newEmail }).eq('email', oldEmail);
+    if(res.error){
+      msg.classList.add('error'); msg.textContent = "Erreur lors de la mise à jour."; console.error(res.error); return;
     }
     await sb.from('tickets').update({ email: newEmail }).eq('email', oldEmail);
     await sb.from('orders').update({ buyer_email: newEmail }).eq('buyer_email', oldEmail);
@@ -1146,9 +1177,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if(nw !== conf){
       msg.classList.add('error'); msg.textContent = 'Les mots de passe ne correspondent pas.'; return;
     }
-    var {error} = await sb.from('users').update({ password: nw }).eq('email', u.email);
-    if(error){
-      msg.classList.add('error'); msg.textContent = "Erreur lors du changement."; console.error(error); return;
+    var res = await sb.from('users').update({ password: nw }).eq('email', u.email);
+    if(res.error){
+      msg.classList.add('error'); msg.textContent = "Erreur lors du changement."; console.error(res.error); return;
     }
     await loadAllData();
     msg.classList.add('success'); msg.textContent = 'Mot de passe changé avec succès.';
@@ -1157,7 +1188,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('confirmPasswordInput').value = '';
   });
 
-  /* ---------- STOCK (affichage public + gestion admin) ---------- */
+  /* ---------- STOCK ---------- */
   function renderStockPublic(){
     TIERS.forEach(function(tier){
       var el = document.querySelector('[data-stock-display="'+tier+'"]');
@@ -1196,9 +1227,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if(missing){
         msg.classList.add('error'); msg.textContent = 'Merci de remplir tous les champs.'; return;
       }
-      var {error} = await sb.from('stock_items').insert(row);
-      if(error){
-        msg.classList.add('error'); msg.textContent = "Erreur lors de l'ajout."; console.error(error); return;
+      var res = await sb.from('stock_items').insert(row);
+      if(res.error){
+        msg.classList.add('error'); msg.textContent = "Erreur lors de l'ajout."; console.error(res.error); return;
       }
       STOCK_FIELDS.forEach(function(f){ box.querySelector('[data-stock-field="'+f.key+'"]').value = ''; });
       msg.classList.add('success'); msg.textContent = 'Compte ajouté au stock ' + tier + '.';
@@ -1269,8 +1300,8 @@ document.addEventListener('DOMContentLoaded', function () {
       msg.classList.add('error'); msg.textContent = "Impossible de bannir l'administrateur."; return;
     }
     if(banned.indexOf(email) === -1){
-      var {error} = await sb.from('banned').insert({ email: email });
-      if(error){ msg.classList.add('error'); msg.textContent = "Erreur."; console.error(error); return; }
+      var res = await sb.from('banned').insert({ email: email });
+      if(res.error){ msg.classList.add('error'); msg.textContent = "Erreur."; console.error(res.error); return; }
     }
     document.getElementById('banEmailInput').value = '';
     msg.classList.add('success'); msg.textContent = 'Membre banni : ' + email;
@@ -1288,25 +1319,86 @@ document.addEventListener('DOMContentLoaded', function () {
     renderAddStockForm();
     renderStockManager();
     renderBannedTable();
-    renderAllTickets();
+    renderAdminTicketList();
+    renderAdminTicketThread();
   }
 
-  /* ---------- TICKETS ---------- */
+  /* ---------- TICKETS : ENVOI D'UN MESSAGE (partagé widget + admin) ---------- */
+  async function sendTicketMessage(ticketId, sender, text){
+    var date = new Date().toLocaleString('fr-FR');
+    var res = await sb.from('ticket_messages').insert({ ticket_id: ticketId, sender: sender, message: text, date: date });
+    return res;
+  }
+
+  /* ---------- WIDGET SUPPORT (flottant, côté client) ---------- */
   var ticketFab = document.getElementById('ticketFab');
   var ticketPanel = document.getElementById('ticketPanel');
-  var ticketStepAsk = document.getElementById('ticketStepAsk');
-  var ticketStepForm = document.getElementById('ticketStepForm');
 
-  function renderTicketFab(){
-    ticketFab.style.display = 'flex';
+  function renderTicketWidget(){
+    var u = currentUser();
+    var guestView = document.getElementById('ticketGuestView');
+    var listView = document.getElementById('ticketListView');
+    var threadView = document.getElementById('ticketThreadView');
+
+    if(!u){
+      guestView.style.display = 'block';
+      listView.style.display = 'none';
+      threadView.style.display = 'none';
+      return;
+    }
+
+    if(openThreadId){
+      guestView.style.display = 'none';
+      listView.style.display = 'none';
+      threadView.style.display = 'flex';
+      renderThreadMessages(openThreadId, 'ticketThreadMessages');
+    }else{
+      guestView.style.display = 'none';
+      listView.style.display = 'block';
+      threadView.style.display = 'none';
+      renderMyThreadList();
+    }
+  }
+
+  function renderMyThreadList(){
+    var u = currentUser();
+    var box = document.getElementById('myThreadList');
+    var mine = tickets.filter(function(t){ return t.email.toLowerCase() === u.email.toLowerCase(); });
+    if(mine.length === 0){
+      box.innerHTML = '<div class="empty-note">Tu n\'as pas encore de ticket.</div>';
+      return;
+    }
+    box.innerHTML = mine.slice().reverse().map(function(t){
+      var msgs = messagesForTicket(t.id);
+      var last = msgs[msgs.length - 1];
+      var preview = last ? (last.sender === 'admin' ? 'Support : ' : 'Toi : ') + last.message : t.reason;
+      return '<div class="thread-summary" data-open-thread="'+t.id+'">'+
+        '<div class="t-date">'+t.date+'</div>'+
+        '<div class="t-preview">'+escapeHTML(preview)+'</div>'+
+      '</div>';
+    }).join('');
+    box.querySelectorAll('[data-open-thread]').forEach(function(el){
+      el.addEventListener('click', function(){
+        openThreadId = parseInt(el.getAttribute('data-open-thread'), 10);
+        renderTicketWidget();
+      });
+    });
+  }
+
+  function renderThreadMessages(ticketId, containerId){
+    var box = document.getElementById(containerId);
+    var msgs = messagesForTicket(ticketId);
+    box.innerHTML = msgs.map(function(m){
+      var cls = m.sender === 'admin' ? 'from-admin' : 'from-user';
+      return '<div class="bubble '+cls+'">'+escapeHTML(m.message)+'<span class="b-date">'+(m.date||'')+'</span></div>';
+    }).join('');
+    box.scrollTop = box.scrollHeight;
   }
 
   ticketFab.addEventListener('click', function(ev){
     ev.stopPropagation();
     ticketPanel.classList.toggle('open');
-    ticketStepAsk.style.display = 'block';
-    ticketStepForm.style.display = 'none';
-    document.getElementById('ticketMsg').textContent = '';
+    if(ticketPanel.classList.contains('open')) renderTicketWidget();
   });
   document.addEventListener('click', function(e){
     if(!ticketPanel.contains(e.target) && e.target !== ticketFab){
@@ -1314,105 +1406,114 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  document.getElementById('ticketNo').addEventListener('click', function(){
+  document.getElementById('ticketGuestLoginBtn').addEventListener('click', function(){
     ticketPanel.classList.remove('open');
+    openLoginModal();
   });
 
-  document.getElementById('ticketYes').addEventListener('click', function(){
+  document.getElementById('createTicketBtn').addEventListener('click', async function(){
     var u = currentUser();
-    if(!u){
-      ticketPanel.classList.remove('open');
-      openLoginModal();
-      return;
-    }
-    ticketStepAsk.style.display = 'none';
-    ticketStepForm.style.display = 'block';
-    document.getElementById('ticketEmail').value = u.email;
-    document.getElementById('ticketReason').value = '';
-  });
-
-  document.getElementById('ticketCancel').addEventListener('click', function(){
-    ticketPanel.classList.remove('open');
-  });
-
-  document.getElementById('ticketAccept').addEventListener('click', async function(){
-    var msg = document.getElementById('ticketMsg');
+    var msg = document.getElementById('newTicketMsg');
     msg.className = 'form-msg';
-    var email = document.getElementById('ticketEmail').value.trim();
-    var reason = document.getElementById('ticketReason').value.trim();
-    if(!email || email.indexOf('@') === -1){
-      msg.classList.add('error'); msg.textContent = 'Adresse email invalide.'; return;
-    }
+    var reason = document.getElementById('newTicketReason').value.trim();
     if(!reason){
       msg.classList.add('error'); msg.textContent = 'Merci de préciser la raison.'; return;
     }
-    var {error} = await sb.from('tickets').insert({
-      email: email,
-      reason: reason,
-      date: new Date().toLocaleString('fr-FR')
-    });
-    if(error){
-      msg.classList.add('error'); msg.textContent = "Erreur lors de l'envoi."; console.error(error); return;
+    var res = await sb.from('tickets').insert({ email: u.email, reason: reason, date: new Date().toLocaleString('fr-FR') }).select();
+    if(res.error){
+      msg.classList.add('error'); msg.textContent = "Erreur lors de l'envoi."; console.error(res.error); return;
     }
-    msg.classList.add('success'); msg.textContent = 'Ticket créé avec succès.';
-    setTimeout(function(){ ticketPanel.classList.remove('open'); }, 900);
+    document.getElementById('newTicketReason').value = '';
+    msg.classList.add('success'); msg.textContent = 'Ticket créé.';
     await loadAllData();
-    renderMyTickets();
-    renderAllTickets();
+    if(res.data && res.data[0]) openThreadId = res.data[0].id;
+    renderTicketWidget();
   });
 
-  function renderMyTickets(){
-    var box = document.getElementById('myTicketsList');
-    var u = currentUser();
-    if(!box || !u) return;
-    var mine = tickets.filter(function(t){ return t.email.toLowerCase() === u.email.toLowerCase(); });
-    if(mine.length === 0){
-      box.innerHTML = '<div class="empty-note">Tu n\'as pas encore de ticket.</div>';
-      return;
-    }
-    box.innerHTML = mine.slice().reverse().map(function(t){
-      var replyHTML = t.reply
-        ? '<div class="ticket-reply"><b>Réponse du support</b> ('+t.replyDate+')<br>'+escapeHTML(t.reply)+'</div>'
-        : '<div class="ticket-reply" style="color:var(--muted);">En attente de réponse du support...</div>';
-      return '<div class="ticket-item"><b>'+t.date+'</b><div class="ticket-reason">'+escapeHTML(t.reason)+'</div>'+replyHTML+'</div>';
-    }).join('');
-  }
+  document.getElementById('ticketThreadBack').addEventListener('click', function(){
+    openThreadId = null;
+    renderTicketWidget();
+  });
 
-  function renderAllTickets(){
-    var box = document.getElementById('allTicketsList');
-    if(!box) return;
+  document.getElementById('ticketThreadSend').addEventListener('click', async function(){
+    var input = document.getElementById('ticketThreadInput');
+    var text = input.value.trim();
+    if(!text || !openThreadId) return;
+    input.value = '';
+    await sendTicketMessage(openThreadId, 'user', text);
+    await loadAllData();
+    renderThreadMessages(openThreadId, 'ticketThreadMessages');
+    renderMyThreadList();
+  });
+  document.getElementById('ticketThreadInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && !e.shiftKey){
+      e.preventDefault();
+      document.getElementById('ticketThreadSend').click();
+    }
+  });
+
+  /* ---------- ADMIN : liste des tickets + fil de conversation ---------- */
+  function renderAdminTicketList(){
+    var box = document.getElementById('adminTicketList');
     if(tickets.length === 0){
       box.innerHTML = '<div class="empty-note">Aucun ticket pour le moment.</div>';
       return;
     }
     box.innerHTML = tickets.slice().reverse().map(function(t){
-      var replyBlock = t.reply
-        ? '<div class="ticket-reply"><b>Ta réponse</b> ('+t.replyDate+')<br>'+escapeHTML(t.reply)+'</div>'
-        : '';
-      return '<div class="ticket-item">'+
-        '<b>'+escapeHTML(t.email)+'</b> — '+t.date+
-        '<div class="ticket-reason">'+escapeHTML(t.reason)+'</div>'+
-        replyBlock+
-        '<div class="ticket-reply-form">'+
-          '<textarea rows="2" placeholder="Écrire une réponse..." data-reply-input="'+t.id+'">'+(t.reply ? escapeHTML(t.reply) : '')+'</textarea>'+
-          '<button type="button" class="mini-btn" data-reply-send="'+t.id+'">'+(t.reply ? 'Modifier la réponse' : 'Répondre')+'</button>'+
-        '</div>'+
+      var msgs = messagesForTicket(t.id);
+      var last = msgs[msgs.length - 1];
+      var preview = last ? (last.sender === 'admin' ? 'Toi : ' : '') + last.message : t.reason;
+      var activeClass = (adminSelectedTicketId === t.id) ? ' style="border-color:var(--cyan);"' : '';
+      return '<div class="thread-summary" data-admin-open-thread="'+t.id+'"'+activeClass+'>'+
+        '<b>'+escapeHTML(t.email)+'</b>'+
+        '<div class="t-date">'+t.date+'</div>'+
+        '<div class="t-preview">'+escapeHTML(preview)+'</div>'+
       '</div>';
     }).join('');
-
-    box.querySelectorAll('[data-reply-send]').forEach(function(btn){
-      btn.addEventListener('click', async function(){
-        var id = parseInt(btn.getAttribute('data-reply-send'), 10);
-        var ta = box.querySelector('[data-reply-input="'+id+'"]');
-        var text = ta.value.trim();
-        if(!text){ alert('Merci d\'écrire une réponse avant d\'envoyer.'); return; }
-        var replyDate = new Date().toLocaleString('fr-FR');
-        var {error} = await sb.from('tickets').update({ reply: text, reply_date: replyDate }).eq('id', id);
-        if(error){ alert('Erreur lors de l\'envoi de la réponse.'); console.error(error); return; }
-        await loadAllData();
-        renderAllTickets();
-        renderMyTickets();
+    box.querySelectorAll('[data-admin-open-thread]').forEach(function(el){
+      el.addEventListener('click', function(){
+        adminSelectedTicketId = parseInt(el.getAttribute('data-admin-open-thread'), 10);
+        renderAdminTicketThread();
       });
+    });
+  }
+
+  function renderAdminTicketThread(){
+    var pane = document.getElementById('adminTicketThreadPane');
+    if(!adminSelectedTicketId){
+      pane.innerHTML = '<div class="empty-note">Sélectionne un ticket dans la liste pour voir la conversation.</div>';
+      return;
+    }
+    var t = tickets.find(function(tt){ return tt.id === adminSelectedTicketId; });
+    if(!t){
+      adminSelectedTicketId = null;
+      pane.innerHTML = '<div class="empty-note">Sélectionne un ticket dans la liste pour voir la conversation.</div>';
+      return;
+    }
+    pane.innerHTML =
+      '<div class="thread-header"><b style="color:#fff;">'+escapeHTML(t.email)+'</b></div>'+
+      '<div class="thread-messages" id="adminThreadMessages"></div>'+
+      '<div class="thread-input-row">'+
+        '<textarea id="adminThreadInput" rows="1" placeholder="Écrire une réponse..."></textarea>'+
+        '<button type="button" class="thread-send-btn" id="adminThreadSend">Envoyer</button>'+
+      '</div>';
+    renderThreadMessages(adminSelectedTicketId, 'adminThreadMessages');
+
+    document.getElementById('adminThreadSend').addEventListener('click', async function(){
+      var input = document.getElementById('adminThreadInput');
+      var text = input.value.trim();
+      if(!text) return;
+      input.value = '';
+      await sendTicketMessage(adminSelectedTicketId, 'admin', text);
+      await loadAllData();
+      renderAdminTicketList();
+      renderAdminTicketThread();
+    });
+    document.getElementById('adminThreadInput').addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && !e.shiftKey){
+        e.preventDefault();
+        document.getElementById('adminThreadSend').click();
+      }
     });
   }
 
@@ -1425,9 +1526,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function orderStatusBadge(status){
-    return status === 'confirmed'
-      ? '<span class="order-status confirmed">Confirmé</span>'
-      : '<span class="order-status pending">En attente de confirmation</span>';
+    if(status === 'confirmed') return '<span class="order-status confirmed">Confirmé</span>';
+    if(status === 'declined') return '<span class="order-status declined">Paiement non reçu</span>';
+    return '<span class="order-status pending">En attente de confirmation</span>';
   }
 
   function renderMyOrders(){
@@ -1448,6 +1549,8 @@ document.addEventListener('DOMContentLoaded', function () {
         creds = '<div class="order-creds">'+
           STOCK_FIELDS.map(function(f){ return '<div><b>'+f.label+' :</b> '+escapeHTML(o.account[f.key])+'</div>'; }).join('')+
         '</div>';
+      }else if(o.status === 'declined'){
+        creds = '<div class="order-locked">Paiement non reçu par l\'équipe. Si tu as bien payé, ouvre un ticket de support.</div>';
       }else{
         creds = '<div class="order-locked">Les informations du compte apparaîtront ici une fois le paiement confirmé.</div>';
       }
@@ -1462,20 +1565,44 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
     box.innerHTML = orders.slice().reverse().map(function(o){
-      var confirmBtn = o.status === 'pending'
-        ? '<button type="button" class="mini-btn confirm" data-confirm-order="'+o.id+'" style="margin-top:8px;">Confirmer le paiement reçu</button>'
+      var actions = o.status === 'pending'
+        ? '<div class="order-actions">'+
+            '<button type="button" class="mini-btn confirm" data-confirm-order="'+o.id+'">Confirmer le paiement reçu</button>'+
+            '<button type="button" class="mini-btn danger" data-decline-order="'+o.id+'">Décliner (pas reçu)</button>'+
+          '</div>'
         : '';
-      return '<div class="order-item"><b>'+escapeHTML(o.buyerEmail)+'</b> — '+o.tier+' — '+o.amount+'€ — '+o.date+orderStatusBadge(o.status)+confirmBtn+'</div>';
+      return '<div class="order-item"><b>'+escapeHTML(o.buyerEmail)+'</b> — '+o.tier+' — '+o.amount+'€ — '+o.date+orderStatusBadge(o.status)+actions+'</div>';
     }).join('');
 
     box.querySelectorAll('[data-confirm-order]').forEach(function(btn){
       btn.addEventListener('click', async function(){
         var id = parseInt(btn.getAttribute('data-confirm-order'), 10);
-        var {error} = await sb.from('orders').update({ status: 'confirmed' }).eq('id', id);
-        if(error){ alert('Erreur lors de la confirmation.'); console.error(error); return; }
+        var res = await sb.from('orders').update({ status: 'confirmed' }).eq('id', id);
+        if(res.error){ alert('Erreur lors de la confirmation.'); console.error(res.error); return; }
         await loadAllData();
         renderAllOrders();
         renderMyOrders();
+      });
+    });
+
+    box.querySelectorAll('[data-decline-order]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var id = parseInt(btn.getAttribute('data-decline-order'), 10);
+        var o = orders.find(function(oo){ return oo.id === id; });
+        if(!o) return;
+        if(!confirm("Confirmer que tu n'as PAS reçu le paiement ? Le compte sera remis en stock.")) return;
+
+        if(o.account){
+          var row = { tier: o.tier };
+          STOCK_FIELDS.forEach(function(f){ row[f.col] = o.account[f.key]; });
+          await sb.from('stock_items').insert(row);
+        }
+        var res = await sb.from('orders').update({ status: 'declined' }).eq('id', id);
+        if(res.error){ alert('Erreur.'); console.error(res.error); return; }
+        await loadAllData();
+        renderAllOrders();
+        renderMyOrders();
+        renderStockPublic();
       });
     });
   }
@@ -1484,7 +1611,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var paypalUser = "YakoubOkbi";
 
   function redirectToPaypal(amount){
-    var url = "https://www.paypal.com/paypalme/" + paypalUser + "/" + amount;
+    // le montant + la devise sont inclus dans le lien : la page PayPal.me arrive déjà pré-remplie
+    var url = "https://www.paypal.com/paypalme/" + paypalUser + "/" + amount + "EUR";
     var link = document.createElement('a');
     link.href = url;
     link.target = '_blank';
@@ -1499,7 +1627,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var tier = btn.getAttribute('data-tier');
       var amount = btn.getAttribute('data-amount');
 
-      await loadAllData(); // vérifier le stock le plus à jour possible avant d'acheter
+      await loadAllData();
 
       var items = stockItems[tier] || [];
       if(items.length === 0){
@@ -1510,7 +1638,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       var u = currentUser();
       if(!u){
-        pendingPurchase = { tier: tier, amount: amount };
         openLoginModal();
         return;
       }
@@ -1523,23 +1650,21 @@ document.addEventListener('DOMContentLoaded', function () {
       var level = levelSelect ? levelSelect.value : '';
       var adminBuyer = isAdmin(u.email);
 
-      // On réserve le premier compte disponible en stock pour cette commande
       var account = items[0];
-      var {error: delError} = await sb.from('stock_items').delete().eq('id', account.id);
-      if(delError){ showToast('Erreur, réessaie.'); console.error(delError); return; }
+      var delRes = await sb.from('stock_items').delete().eq('id', account.id);
+      if(delRes.error){ showToast('Erreur, réessaie.'); console.error(delRes.error); return; }
 
       var orderRow = {
         tier: tier,
         amount: adminBuyer ? 0 : amount,
         buyer_email: u.email,
         level: level,
-        // Les commandes de l'admin sont gratuites : pas de paiement à confirmer
         status: adminBuyer ? 'confirmed' : 'pending',
         account: account,
         date: new Date().toLocaleString('fr-FR')
       };
-      var {error: orderError} = await sb.from('orders').insert(orderRow);
-      if(orderError){ showToast('Erreur lors de la commande.'); console.error(orderError); return; }
+      var orderRes = await sb.from('orders').insert(orderRow);
+      if(orderRes.error){ showToast('Erreur lors de la commande.'); console.error(orderRes.error); return; }
 
       await loadAllData();
       renderStockPublic();
@@ -1548,7 +1673,7 @@ document.addEventListener('DOMContentLoaded', function () {
         showToast('Commande admin créée gratuitement et confirmée automatiquement.');
       }else{
         redirectToPaypal(amount);
-        showToast('Commande créée. Effectue le virement PayPal puis attends la confirmation dans "Commandes".');
+        showToast('Commande créée. Effectue le virement PayPal (montant déjà pré-rempli) puis attends la confirmation dans "Commandes".');
       }
     });
   });
@@ -1558,12 +1683,12 @@ document.addEventListener('DOMContentLoaded', function () {
     await loadAllData();
     renderAuthArea();
     renderStockPublic();
+    renderTicketWidget();
     showView('mainSite');
-    // rafraîchissement automatique léger pour voir les nouveautés sans recharger la page
     setInterval(async function(){
       await loadAllData();
       renderCurrentView();
-    }, 10000);
+    }, 8000);
   })();
 });
 </script>
